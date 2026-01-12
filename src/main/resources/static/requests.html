@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявки - Система учета ТМЦ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Система ТМЦ</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/dashboard.html" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Панель управления</span>
+                </a>
+                <a href="/materials.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span>Материалы</span>
+                </a>
+                <a href="/requests.html" class="nav-item active">
+                    <span class="nav-icon">📝</span>
+                    <span>Заявки</span>
+                </a>
+                <a href="/movements.html" class="nav-item" id="movementsLink">
+                    <span class="nav-icon">🔄</span>
+                    <span>Движения</span>
+                </a>
+                <a href="/users.html" class="nav-item" id="usersLink">
+                    <span class="nav-icon">👥</span>
+                    <span>Пользователи</span>
+                </a>
+                <a href="/reports.html" class="nav-item" id="reportsLink">
+                    <span class="nav-icon">📈</span>
+                    <span>Отчеты</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name"></div>
+                        <div class="user-role"></div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
+            </div>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Заявки на выдачу ТМЦ</h1>
+            </header>
+            
+            <!-- Панель инструментов -->
+            <div class="content-section">
+                <div class="toolbar">
+                    <div>
+                        <select id="statusFilter" onchange="filterRequests()">
+                            <option value="all">Все статусы</option>
+                            <option value="ACCEPTED">Принята</option>
+                            <option value="IN_PROGRESS">В работе</option>
+                            <option value="AWAITING_ISSUANCE">Ожидает выдачи</option>
+                            <option value="ISSUED">Выдана</option>
+                            <option value="CLOSED">Закрыта</option>
+                            <option value="REJECTED">Отклонена</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="openModal('createRequestModal')" id="createRequestBtn">+ Создать заявку</button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Номер</th>
+                                <th>Дата</th>
+                                <th>Инициатор</th>
+                                <th>Подразделение</th>
+                                <th>Назначение</th>
+                                <th>Позиций</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTable">
+                            <tr>
+                                <td colspan="8" class="text-center">Загрузка...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Модальное окно создания заявки -->
+    <div id="createRequestModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Создать заявку</h3>
+                <button class="modal-close" onclick="closeModal('createRequestModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="createRequestForm">
+                    <div class="form-group">
+                        <label for="purpose">Назначение *</label>
+                        <textarea id="purpose" name="purpose" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Примечания</label>
+                        <textarea id="notes" name="notes"></textarea>
+                    </div>
+                    <div id="requestItems">
+                        <h4>Материалы</h4>
+                        <div id="itemsList"></div>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="addRequestItem()">+ Добавить материал</button>
+                    </div>
+                    <div id="modalError" class="error-message" style="display: none;"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('createRequestModal')">Отмена</button>
+                <button class="btn btn-primary" onclick="saveRequest()">Создать заявку</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script>
+        let allRequests = [];
+        let materials = [];
+        let itemCounter = 0;
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadMaterials();
+            await loadRequests();
+            
+            const user = getCurrentUser();
+            if (user.role === 'MOL' && document.getElementById('createRequestBtn')) {
+                document.getElementById('createRequestBtn').style.display = 'none';
+            }
+        });
+        
+        async function loadMaterials() {
+            try {
+                materials = await apiRequest('/materials/active');
+            } catch (error) {
+                console.error('Error loading materials:', error);
+            }
+        }
+        
+        async function loadRequests() {
+            try {
+                const user = getCurrentUser();
+                if (user.role === 'ENGINEER') {
+                    allRequests = await apiRequest('/requests/my-requests');
+                } else {
+                    allRequests = await apiRequest('/requests');
+                }
+                displayRequests(allRequests);
+            } catch (error) {
+                console.error('Error loading requests:', error);
+                document.getElementById('requestsTable').innerHTML = 
+                    '<tr><td colspan="8" class="text-center">Ошибка загрузки данных</td></tr>';
+            }
+        }
+        
+        function displayRequests(requests) {
+            const tbody = document.getElementById('requestsTable');
+            if (requests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">Нет заявок</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = requests.map(request => `
+                <tr>
+                    <td>${request.requestNumber}</td>
+                    <td>${formatDateOnly(request.createdAt)}</td>
+                    <td>${request.requesterName}</td>
+                    <td>${request.departmentName}</td>
+                    <td>${request.purpose.substring(0, 50)}${request.purpose.length > 50 ? '...' : ''}</td>
+                    <td>${request.items.length}</td>
+                    <td>${getRequestStatusBadge(request.status)}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="viewRequest(${request.id})">Просмотр</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function filterRequests() {
+            const status = document.getElementById('statusFilter').value;
+            if (status === 'all') {
+                displayRequests(allRequests);
+            } else {
+                const filtered = allRequests.filter(r => r.status === status);
+                displayRequests(filtered);
+            }
+        }
+        
+        function addRequestItem() {
+            itemCounter++;
+            const itemsContainer = document.getElementById('itemsList');
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'form-group';
+            itemDiv.id = `item-${itemCounter}`;
+            itemDiv.innerHTML = `
+                <div style="border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+                    <label>Материал</label>
+                    <select class="item-material" data-id="${itemCounter}" required>
+                        <option value="">Выберите материал...</option>
+                        ${materials.map(m => `<option value="${m.id}" data-article="${m.article}" data-name="${m.name}" data-unit="${m.unitOfMeasure}">${m.article} - ${m.name}</option>`).join('')}
+                    </select>
+                    <label>Количество</label>
+                    <input type="number" class="item-quantity" data-id="${itemCounter}" step="0.001" min="0.001" required>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeRequestItem(${itemCounter})">Удалить</button>
+                </div>
+            `;
+            itemsContainer.appendChild(itemDiv);
+        }
+        
+        function removeRequestItem(id) {
+            const itemDiv = document.getElementById(`item-${id}`);
+            if (itemDiv) {
+                itemDiv.remove();
+            }
+        }
+        
+        async function saveRequest() {
+            const form = document.getElementById('createRequestForm');
+            const items = [];
+            
+            // Сбор материалов
+            document.querySelectorAll('.item-material').forEach(select => {
+                const id = select.dataset.id;
+                const quantityInput = document.querySelector(`.item-quantity[data-id="${id}"]`);
+                
+                if (select.value && quantityInput.value) {
+                    items.push({
+                        materialId: parseInt(select.value),
+                        requestedQuantity: parseFloat(quantityInput.value)
+                    });
+                }
+            });
+            
+            if (items.length === 0) {
+                showError('Добавьте хотя бы один материал', 'modalError');
+                return;
+            }
+            
+            const data = {
+                purpose: document.getElementById('purpose').value,
+                notes: document.getElementById('notes').value,
+                items: items
+            };
+            
+            try {
+                await apiRequest('/requests', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                
+                closeModal('createRequestModal');
+                form.reset();
+                document.getElementById('itemsList').innerHTML = '';
+                itemCounter = 0;
+                await loadRequests();
+                alert('Заявка успешно создана');
+            } catch (error) {
+                showError(error.message, 'modalError');
+            }
+        }
+        
+        function viewRequest(id) {
+            // Здесь можно реализовать страницу просмотра/обработки заявки
+            alert('Просмотр заявки ID: ' + id);
+        }
+    </script>
+</body>
+</html>

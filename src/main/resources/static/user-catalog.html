@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог ТМЦ - Система учета ТМЦ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Система ТМЦ</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/user-dashboard.html" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span>Главная</span>
+                </a>
+                <a href="/user-catalog.html" class="nav-item active">
+                    <span class="nav-icon">📦</span>
+                    <span>Каталог ТМЦ</span>
+                </a>
+                <a href="#" onclick="openCreateRequestModal(); return false;" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span>Создать заявку</span>
+                </a>
+                <a href="/user-my-requests.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span>Мои заявки</span>
+                </a>
+                <a href="/user-history.html" class="nav-item">
+                    <span class="nav-icon">📜</span>
+                    <span>История заявок</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name"></div>
+                        <div class="user-role"></div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
+            </div>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Каталог ТМЦ</h1>
+                <p>Просмотр доступных материалов (только для чтения)</p>
+            </header>
+            
+            <div class="content-section">
+                <!-- Панель фильтров -->
+                <div class="toolbar">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <select id="warehouseFilter" onchange="applyFilters()">
+                            <option value="">Все склады</option>
+                            <option value="CONSUMABLES">Расходные материалы</option>
+                            <option value="SPARE_PARTS">Запасные части</option>
+                            <option value="COMPONENTS">Комплектующие</option>
+                        </select>
+                        
+                        <select id="categoryFilter" onchange="applyFilters()">
+                            <option value="">Все категории</option>
+                        </select>
+                        
+                        <select id="stockFilter" onchange="applyFilters()">
+                            <option value="">Все остатки</option>
+                            <option value="in-stock">В наличии</option>
+                            <option value="low-stock">Низкий запас</option>
+                            <option value="out-of-stock">Отсутствует</option>
+                        </select>
+                        
+                        <input type="text" id="codeFilter" placeholder="Фильтр по коду" onkeyup="applyFilters()">
+                        <input type="text" id="nameFilter" placeholder="Фильтр по названию" onkeyup="applyFilters()">
+                        
+                        <button class="btn btn-primary btn-sm" onclick="resetFilters()">Сбросить фильтры</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Код</th>
+                                <th>Название</th>
+                                <th>Категория</th>
+                                <th>Склад</th>
+                                <th>Расположение</th>
+                                <th>Остаток</th>
+                                <th>Ед. изм.</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody id="catalogTable">
+                            <tr>
+                                <td colspan="8" class="text-center">Загрузка...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 10px; color: #666; font-size: 14px;">
+                    Всего материалов: <span id="totalCount">0</span>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script>
+        let allMaterials = [];
+        let categories = [];
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadCategories();
+            await loadMaterials();
+        });
+        
+        async function loadCategories() {
+            try {
+                categories = await apiRequest('/material-categories/active');
+                const select = document.getElementById('categoryFilter');
+                select.innerHTML = '<option value="">Все категории</option>';
+                categories.forEach(cat => {
+                    select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+                });
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+        
+        async function loadMaterials() {
+            try {
+                allMaterials = await apiRequest('/materials/active');
+                displayMaterials(allMaterials);
+            } catch (error) {
+                console.error('Error loading materials:', error);
+                document.getElementById('catalogTable').innerHTML = 
+                    '<tr><td colspan="8" class="text-center">Ошибка загрузки данных</td></tr>';
+            }
+        }
+        
+        function displayMaterials(materials) {
+            const tbody = document.getElementById('catalogTable');
+            document.getElementById('totalCount').textContent = materials.length;
+            
+            if (materials.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">Нет материалов</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = materials.map(material => `
+                <tr>
+                    <td>${material.article}</td>
+                    <td>${material.name}</td>
+                    <td>${material.categoryName}</td>
+                    <td>${getWarehouseName(material.warehouseType || 'CONSUMABLES')}</td>
+                    <td>${material.storageLocation || '-'}</td>
+                    <td>${formatNumber(material.currentQuantity, 0)}</td>
+                    <td>${material.unitOfMeasure}</td>
+                    <td>${getStockLevelIndicator(material.stockLevel)} ${getStockLevelText(material.stockLevel)}</td>
+                </tr>
+            `).join('');
+        }
+        
+        function getWarehouseName(type) {
+            const names = {
+                'CONSUMABLES': 'Расходные материалы',
+                'SPARE_PARTS': 'Запасные части',
+                'COMPONENTS': 'Комплектующие'
+            };
+            return names[type] || type;
+        }
+        
+        function getStockLevelText(level) {
+            const texts = {
+                'IN_STOCK': 'В наличии',
+                'LOW_STOCK': 'Мало',
+                'OUT_OF_STOCK': 'Отсутствует'
+            };
+            return texts[level] || level;
+        }
+        
+        function applyFilters() {
+            const warehouse = document.getElementById('warehouseFilter').value;
+            const category = document.getElementById('categoryFilter').value;
+            const stock = document.getElementById('stockFilter').value;
+            const code = document.getElementById('codeFilter').value.toLowerCase();
+            const name = document.getElementById('nameFilter').value.toLowerCase();
+            
+            let filtered = allMaterials;
+            
+            if (warehouse) {
+                filtered = filtered.filter(m => m.warehouseType === warehouse);
+            }
+            
+            if (category) {
+                filtered = filtered.filter(m => m.categoryId == category);
+            }
+            
+            if (stock) {
+                if (stock === 'in-stock') {
+                    filtered = filtered.filter(m => m.stockLevel === 'IN_STOCK');
+                } else if (stock === 'low-stock') {
+                    filtered = filtered.filter(m => m.stockLevel === 'LOW_STOCK');
+                } else if (stock === 'out-of-stock') {
+                    filtered = filtered.filter(m => m.stockLevel === 'OUT_OF_STOCK');
+                }
+            }
+            
+            if (code) {
+                filtered = filtered.filter(m => m.article.toLowerCase().includes(code));
+            }
+            
+            if (name) {
+                filtered = filtered.filter(m => m.name.toLowerCase().includes(name));
+            }
+            
+            displayMaterials(filtered);
+        }
+        
+        function resetFilters() {
+            document.getElementById('warehouseFilter').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('stockFilter').value = '';
+            document.getElementById('codeFilter').value = '';
+            document.getElementById('nameFilter').value = '';
+            displayMaterials(allMaterials);
+        }
+        
+        function openCreateRequestModal() {
+            window.location.href = '/user-dashboard.html#create';
+        }
+    </script>
+</body>
+</html>

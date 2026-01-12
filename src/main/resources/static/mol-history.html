@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История заявок - Система учета ТМЦ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Система ТМЦ</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/mol-dashboard.html" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span>Главная</span>
+                </a>
+                <a href="/mol-catalog.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span>Каталог ТМЦ</span>
+                </a>
+                <a href="/mol-requests.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span>Заявки</span>
+                </a>
+                <a href="/mol-history.html" class="nav-item active">
+                    <span class="nav-icon">📜</span>
+                    <span>История</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name"></div>
+                        <div class="user-role"></div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
+            </div>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>История заявок</h1>
+                <p>Автоматическое сохранение всех заявок на выдачу ТМЦ</p>
+            </header>
+            
+            <div class="content-section">
+                <!-- Фильтры -->
+                <div class="toolbar">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="date" id="startDate" placeholder="Дата с">
+                        <input type="date" id="endDate" placeholder="Дата по">
+                        <select id="groupFilter">
+                            <option value="">Все группы</option>
+                            <option value="АРМ">АРМ</option>
+                            <option value="ГОТО">ГОТО</option>
+                            <option value="ГОКС">ГОКС</option>
+                        </select>
+                        <button class="btn btn-primary btn-sm" onclick="applyFilters()">Применить фильтры</button>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" id="selectAllHistory" onchange="toggleSelectAllHistory()">
+                            Выбрать все
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">
+                                    <input type="checkbox" id="headerCheckboxHistory" onchange="toggleSelectAllHistory()">
+                                </th>
+                                <th>Номер заявки</th>
+                                <th>Дата заявки</th>
+                                <th>Специалист</th>
+                                <th>Группа</th>
+                                <th>Наименование работ</th>
+                                <th>Статус</th>
+                                <th>Дата выдачи</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTable">
+                            <tr>
+                                <td colspan="8" class="text-center">Загрузка...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Кнопки экспорта -->
+                <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="btn btn-primary" onclick="exportHistoryToPDF()">📄 Экспорт в PDF</button>
+                    <button class="btn btn-success" onclick="exportHistoryToExcel()">📊 Экспорт в Excel</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script>
+        let allHistory = [];
+        let selectedHistory = [];
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadHistory();
+            
+            // Установить даты по умолчанию (последние 30 дней)
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30);
+            
+            document.getElementById('endDate').valueAsDate = endDate;
+            document.getElementById('startDate').valueAsDate = startDate;
+        });
+        
+        async function loadHistory() {
+            try {
+                // Загружаем все заявки (история - это все заявки)
+                allHistory = await apiRequest('/requests');
+                displayHistory(allHistory);
+            } catch (error) {
+                console.error('Error loading history:', error);
+                document.getElementById('historyTable').innerHTML = 
+                    '<tr><td colspan="8" class="text-center">Ошибка загрузки данных</td></tr>';
+            }
+        }
+        
+        function displayHistory(requests) {
+            const tbody = document.getElementById('historyTable');
+            if (requests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">Нет записей</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = requests.map(request => {
+                const workGroup = request.departmentName || '-'; // или можно добавить поле workGroup в RequestDTO
+                
+                return `
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="history-checkbox" data-id="${request.id}" onchange="updateHistorySelection()">
+                        </td>
+                        <td>${request.requestNumber}</td>
+                        <td>${formatDateOnly(request.createdAt)}</td>
+                        <td>${request.requesterName}</td>
+                        <td>${workGroup}</td>
+                        <td>${request.purpose}</td>
+                        <td>${getRequestStatusBadge(request.status)}</td>
+                        <td>${request.issuedAt ? formatDateOnly(request.issuedAt) : '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function applyFilters() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const group = document.getElementById('groupFilter').value;
+            
+            let filtered = allHistory;
+            
+            if (startDate) {
+                filtered = filtered.filter(r => new Date(r.createdAt) >= new Date(startDate));
+            }
+            
+            if (endDate) {
+                const endDateTime = new Date(endDate);
+                endDateTime.setHours(23, 59, 59, 999);
+                filtered = filtered.filter(r => new Date(r.createdAt) <= endDateTime);
+            }
+            
+            if (group) {
+                // Фильтрация по группе
+                filtered = filtered.filter(r => r.departmentName && r.departmentName.includes(group));
+            }
+            
+            displayHistory(filtered);
+        }
+        
+        function toggleSelectAllHistory() {
+            const selectAll = document.getElementById('headerCheckboxHistory').checked;
+            document.querySelectorAll('.history-checkbox').forEach(checkbox => {
+                checkbox.checked = selectAll;
+            });
+            updateHistorySelection();
+        }
+        
+        function updateHistorySelection() {
+            selectedHistory = [];
+            document.querySelectorAll('.history-checkbox:checked').forEach(checkbox => {
+                selectedHistory.push(parseInt(checkbox.dataset.id));
+            });
+        }
+        
+        async function exportHistoryToPDF() {
+            if (selectedHistory.length === 0) {
+                alert('Выберите хотя бы одну запись');
+                return;
+            }
+            
+            try {
+                const selectedData = allHistory.filter(r => selectedHistory.includes(r.id));
+                const dates = selectedData.map(r => new Date(r.createdAt));
+                const startDate = new Date(Math.min(...dates)).toISOString();
+                const endDate = new Date(Math.max(...dates)).toISOString();
+                
+                const url = `/api/reports/requests/export/excel?startDate=${startDate}&endDate=${endDate}`;
+                
+                // Создание и скачивание отчета
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': 'Bearer ' + getToken()
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Ошибка при экспорте');
+                
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = 'История_заявок.pdf';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(downloadUrl);
+                a.remove();
+                
+                alert('Отчет успешно сформирован');
+            } catch (error) {
+                alert('Ошибка при экспорте: ' + error.message);
+            }
+        }
+        
+        async function exportHistoryToExcel() {
+            if (selectedHistory.length === 0) {
+                alert('Выберите хотя бы одну запись');
+                return;
+            }
+            
+            try {
+                const selectedData = allHistory.filter(r => selectedHistory.includes(r.id));
+                const dates = selectedData.map(r => new Date(r.createdAt));
+                const startDate = new Date(Math.min(...dates)).toISOString();
+                const endDate = new Date(Math.max(...dates)).toISOString();
+                
+                const url = `/api/reports/requests/export/excel?startDate=${startDate}&endDate=${endDate}`;
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': 'Bearer ' + getToken()
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Ошибка при экспорте');
+                
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = 'История_заявок.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(downloadUrl);
+                a.remove();
+                
+                alert('Отчет успешно сформирован');
+            } catch (error) {
+                alert('Ошибка при экспорте: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

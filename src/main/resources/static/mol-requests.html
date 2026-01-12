@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заявки на ТМЦ - Система учета ТМЦ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Система ТМЦ</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/mol-dashboard.html" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span>Главная</span>
+                </a>
+                <a href="/mol-catalog.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span>Каталог ТМЦ</span>
+                </a>
+                <a href="/mol-requests.html" class="nav-item active">
+                    <span class="nav-icon">📝</span>
+                    <span>Заявки</span>
+                </a>
+                <a href="/mol-history.html" class="nav-item">
+                    <span class="nav-icon">📜</span>
+                    <span>История</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name"></div>
+                        <div class="user-role"></div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
+            </div>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Заявки на ТМЦ</h1>
+            </header>
+            
+            <div class="content-section">
+                <div class="toolbar">
+                    <div>
+                        <label>
+                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                            Выбрать все
+                        </label>
+                    </div>
+                    <div>
+                        <select id="statusFilter" onchange="filterRequests()">
+                            <option value="">Все статусы</option>
+                            <option value="ACCEPTED">Принята</option>
+                            <option value="IN_PROGRESS">В работе</option>
+                            <option value="AWAITING_ISSUANCE">Ожидает выдачи</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">
+                                    <input type="checkbox" id="headerCheckbox" onchange="toggleSelectAll()">
+                                </th>
+                                <th>Номер заявки</th>
+                                <th>Дата заявки</th>
+                                <th>Статус</th>
+                                <th>Специалист</th>
+                                <th>Группа</th>
+                                <th>Наименование работ</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestsTable">
+                            <tr>
+                                <td colspan="8" class="text-center">Загрузка...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Кнопки действий -->
+                <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="btn btn-primary" onclick="exportToPDF()">📄 Экспорт в PDF</button>
+                    <button class="btn btn-success" onclick="exportToExcel()">📊 Экспорт в Excel</button>
+                    <button class="btn btn-warning" onclick="takeInProgress()">▶️ Взять в работу</button>
+                    <button class="btn btn-danger" onclick="cancelRequests()">❌ Отменить заявки</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script>
+        let allRequests = [];
+        let selectedRequests = [];
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadRequests();
+        });
+        
+        async function loadRequests() {
+            try {
+                allRequests = await apiRequest('/requests');
+                displayRequests(allRequests);
+            } catch (error) {
+                console.error('Error loading requests:', error);
+                document.getElementById('requestsTable').innerHTML = 
+                    '<tr><td colspan="8" class="text-center">Ошибка загрузки данных</td></tr>';
+            }
+        }
+        
+        function displayRequests(requests) {
+            const tbody = document.getElementById('requestsTable');
+            if (requests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">Нет заявок</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = requests.map(request => `
+                <tr>
+                    <td>
+                        <input type="checkbox" class="request-checkbox" data-id="${request.id}" onchange="updateSelection()">
+                    </td>
+                    <td>${request.requestNumber}</td>
+                    <td>${formatDateOnly(request.createdAt)}</td>
+                    <td>${getRequestStatusBadge(request.status)}</td>
+                    <td>${request.requesterName}</td>
+                    <td>${request.departmentName}</td>
+                    <td>${request.purpose}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" onclick="viewRequest(${request.id})">👁️ Просмотр</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function filterRequests() {
+            const status = document.getElementById('statusFilter').value;
+            if (status === '') {
+                displayRequests(allRequests);
+            } else {
+                const filtered = allRequests.filter(r => r.status === status);
+                displayRequests(filtered);
+            }
+        }
+        
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('headerCheckbox').checked;
+            document.querySelectorAll('.request-checkbox').forEach(checkbox => {
+                checkbox.checked = selectAll;
+            });
+            updateSelection();
+        }
+        
+        function updateSelection() {
+            selectedRequests = [];
+            document.querySelectorAll('.request-checkbox:checked').forEach(checkbox => {
+                selectedRequests.push(parseInt(checkbox.dataset.id));
+            });
+            console.log('Selected requests:', selectedRequests);
+        }
+        
+        async function exportToPDF() {
+            if (selectedRequests.length === 0) {
+                alert('Выберите хотя бы одну заявку');
+                return;
+            }
+            
+            try {
+                // Получаем даты для выбранных заявок
+                const selectedRequestsData = allRequests.filter(r => selectedRequests.includes(r.id));
+                const dates = selectedRequestsData.map(r => new Date(r.createdAt));
+                const startDate = new Date(Math.min(...dates)).toISOString();
+                const endDate = new Date(Math.max(...dates)).toISOString();
+                
+                const url = `/api/reports/requests/export/pdf?startDate=${startDate}&endDate=${endDate}`;
+                window.open(url, '_blank');
+            } catch (error) {
+                alert('Ошибка при экспорте: ' + error.message);
+            }
+        }
+        
+        async function exportToExcel() {
+            if (selectedRequests.length === 0) {
+                alert('Выберите хотя бы одну заявку');
+                return;
+            }
+            
+            try {
+                const selectedRequestsData = allRequests.filter(r => selectedRequests.includes(r.id));
+                const dates = selectedRequestsData.map(r => new Date(r.createdAt));
+                const startDate = new Date(Math.min(...dates)).toISOString();
+                const endDate = new Date(Math.max(...dates)).toISOString();
+                
+                const url = `/api/reports/requests/export/excel?startDate=${startDate}&endDate=${endDate}`;
+                window.open(url, '_blank');
+            } catch (error) {
+                alert('Ошибка при экспорте: ' + error.message);
+            }
+        }
+        
+        async function takeInProgress() {
+            if (selectedRequests.length === 0) {
+                alert('Выберите хотя бы одну заявку');
+                return;
+            }
+            
+            if (!confirm(`Взять в работу ${selectedRequests.length} заявок?`)) {
+                return;
+            }
+            
+            try {
+                for (const requestId of selectedRequests) {
+                    await apiRequest(`/requests/${requestId}/status`, {
+                        method: 'PATCH',
+                        body: JSON.stringify({ status: 'IN_PROGRESS' })
+                    });
+                }
+                
+                alert('Заявки успешно взяты в работу. Пользователи получат уведомления.');
+                await loadRequests();
+                selectedRequests = [];
+            } catch (error) {
+                alert('Ошибка при обработке заявок: ' + error.message);
+            }
+        }
+        
+        async function cancelRequests() {
+            if (selectedRequests.length === 0) {
+                alert('Выберите хотя бы одну заявку');
+                return;
+            }
+            
+            const reason = prompt('Укажите причину отмены:');
+            if (!reason) return;
+            
+            try {
+                for (const requestId of selectedRequests) {
+                    await apiRequest(`/requests/${requestId}/reject`, {
+                        method: 'POST',
+                        body: JSON.stringify({ reason })
+                    });
+                }
+                
+                alert('Заявки отменены. Пользователи получат уведомления.');
+                await loadRequests();
+                selectedRequests = [];
+            } catch (error) {
+                alert('Ошибка при отмене заявок: ' + error.message);
+            }
+        }
+        
+        function viewRequest(id) {
+            // TODO: Открыть детальную информацию о заявке
+            alert('Просмотр заявки ID: ' + id);
+        }
+    </script>
+</body>
+</html>

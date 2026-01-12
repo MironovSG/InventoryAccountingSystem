@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История заявок - Система учета ТМЦ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Система ТМЦ</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/user-dashboard.html" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span>Главная</span>
+                </a>
+                <a href="/user-catalog.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span>Каталог ТМЦ</span>
+                </a>
+                <a href="#" onclick="window.location.href='/user-dashboard.html'; return false;" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span>Создать заявку</span>
+                </a>
+                <a href="/user-my-requests.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span>Мои заявки</span>
+                </a>
+                <a href="/user-history.html" class="nav-item active">
+                    <span class="nav-icon">📜</span>
+                    <span>История заявок</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name"></div>
+                        <div class="user-role"></div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
+            </div>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>История всех заявок</h1>
+                <p>Общая история заявок на выдачу ТМЦ</p>
+            </header>
+            
+            <div class="content-section">
+                <!-- Фильтры -->
+                <div class="toolbar">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <input type="date" id="startDate" placeholder="Дата с">
+                        <input type="date" id="endDate" placeholder="Дата по">
+                        <select id="groupFilter">
+                            <option value="">Все группы</option>
+                            <option value="АРМ">АРМ</option>
+                            <option value="ГОТО">ГОТО</option>
+                            <option value="ГОКС">ГОКС</option>
+                        </select>
+                        <select id="statusFilter">
+                            <option value="">Все статусы</option>
+                            <option value="ACCEPTED">Принята</option>
+                            <option value="IN_PROGRESS">В работе</option>
+                            <option value="ISSUED">Выдана</option>
+                            <option value="CLOSED">Закрыта</option>
+                            <option value="REJECTED">Отклонена</option>
+                        </select>
+                        <button class="btn btn-primary btn-sm" onclick="applyFilters()">Применить</button>
+                        <button class="btn btn-secondary btn-sm" onclick="resetFilters()">Сбросить</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Номер заявки</th>
+                                <th>Дата заявки</th>
+                                <th>Специалист</th>
+                                <th>Группа</th>
+                                <th>Наименование работ</th>
+                                <th>Статус</th>
+                                <th>Дата выдачи</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTable">
+                            <tr>
+                                <td colspan="7" class="text-center">Загрузка...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 10px; color: #666; font-size: 14px;">
+                    Всего записей: <span id="totalCount">0</span>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script>
+        let allHistory = [];
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadHistory();
+            
+            // Установить даты по умолчанию (последние 30 дней)
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 30);
+            
+            document.getElementById('endDate').valueAsDate = endDate;
+            document.getElementById('startDate').valueAsDate = startDate;
+        });
+        
+        async function loadHistory() {
+            try {
+                // Загружаем все заявки (история)
+                allHistory = await apiRequest('/requests');
+                displayHistory(allHistory);
+            } catch (error) {
+                console.error('Error loading history:', error);
+                document.getElementById('historyTable').innerHTML = 
+                    '<tr><td colspan="7" class="text-center">Ошибка загрузки данных</td></tr>';
+            }
+        }
+        
+        function displayHistory(requests) {
+            const tbody = document.getElementById('historyTable');
+            document.getElementById('totalCount').textContent = requests.length;
+            
+            if (requests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">Нет записей</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = requests.map(request => {
+                const workGroup = request.departmentName || '-';
+                
+                return `
+                    <tr>
+                        <td>${request.requestNumber}</td>
+                        <td>${formatDateOnly(request.createdAt)}</td>
+                        <td>${request.requesterName}</td>
+                        <td>${workGroup}</td>
+                        <td>${request.purpose}</td>
+                        <td>${getRequestStatusBadge(request.status)}</td>
+                        <td>${request.issuedAt ? formatDateOnly(request.issuedAt) : '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function applyFilters() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const group = document.getElementById('groupFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            
+            let filtered = allHistory;
+            
+            if (startDate) {
+                filtered = filtered.filter(r => new Date(r.createdAt) >= new Date(startDate));
+            }
+            
+            if (endDate) {
+                const endDateTime = new Date(endDate);
+                endDateTime.setHours(23, 59, 59, 999);
+                filtered = filtered.filter(r => new Date(r.createdAt) <= endDateTime);
+            }
+            
+            if (group) {
+                filtered = filtered.filter(r => r.departmentName && r.departmentName.includes(group));
+            }
+            
+            if (status) {
+                filtered = filtered.filter(r => r.status === status);
+            }
+            
+            displayHistory(filtered);
+        }
+        
+        function resetFilters() {
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('groupFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            displayHistory(allHistory);
+        }
+    </script>
+</body>
+</html>

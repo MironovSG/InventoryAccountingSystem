@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная - Система учета ТМЦ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Система ТМЦ</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/user-dashboard.html" class="nav-item active">
+                    <span class="nav-icon">🏠</span>
+                    <span>Главная</span>
+                </a>
+                <a href="/user-catalog.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span>Каталог ТМЦ</span>
+                </a>
+                <a href="#" onclick="openCreateRequestModal(); return false;" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span>Создать заявку</span>
+                </a>
+                <a href="/user-my-requests.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span>Мои заявки</span>
+                </a>
+                <a href="/user-history.html" class="nav-item">
+                    <span class="nav-icon">📜</span>
+                    <span>История заявок</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name"></div>
+                        <div class="user-role"></div>
+                    </div>
+                </div>
+                
+                <!-- Уведомления -->
+                <div id="notificationBadge" style="display: none; background: #f44336; color: white; padding: 5px 10px; border-radius: 15px; text-align: center; margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='/user-notifications.html'">
+                    <span id="notificationCount">0</span> новых уведомлений
+                </div>
+                
+                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
+            </div>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Главная страница</h1>
+                <p>Добро пожаловать в систему учета ТМЦ</p>
+            </header>
+            
+            <!-- Быстрый доступ -->
+            <div class="stats-grid">
+                <div class="stat-card" onclick="window.location.href='/user-catalog.html'" style="cursor: pointer;">
+                    <div class="stat-icon" style="background-color: #2196F3;">📦</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Каталог ТМЦ</div>
+                        <div class="stat-value" style="font-size: 16px;">Просмотр материалов</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="openCreateRequestModal()" style="cursor: pointer;">
+                    <div class="stat-icon" style="background-color: #4CAF50;">➕</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Создать заявку</div>
+                        <div class="stat-value" style="font-size: 16px;">Заявка на ТМЦ</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="window.location.href='/user-my-requests.html'" style="cursor: pointer;">
+                    <div class="stat-icon" style="background-color: #FF9800;">📝</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Мои заявки</div>
+                        <div class="stat-value" id="myRequestsCount">0</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card" onclick="window.location.href='/user-history.html'" style="cursor: pointer;">
+                    <div class="stat-icon" style="background-color: #9C27B0;">📜</div>
+                    <div class="stat-content">
+                        <div class="stat-label">История заявок</div>
+                        <div class="stat-value" style="font-size: 16px;">Все заявки</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Последние уведомления -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Последние уведомления</h2>
+                    <a href="/user-notifications.html" class="btn btn-primary btn-sm">Все уведомления</a>
+                </div>
+                <div id="notificationsList">
+                    <p style="text-align: center; color: #999;">Загрузка...</p>
+                </div>
+            </div>
+            
+            <!-- Мои последние заявки -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Мои последние заявки</h2>
+                    <a href="/user-my-requests.html" class="btn btn-primary btn-sm">Все заявки</a>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Номер заявки</th>
+                                <th>Дата</th>
+                                <th>Статус</th>
+                                <th>Наименование работ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentRequestsTable">
+                            <tr>
+                                <td colspan="4" class="text-center">Загрузка...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Модальное окно создания заявки -->
+    <div id="createRequestModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>Создание заявки на выдачу ТМЦ</h3>
+                <button class="modal-close" onclick="closeModal('createRequestModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="createRequestForm">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">Код материала</th>
+                                <th style="width: 30%;">Название</th>
+                                <th style="width: 15%;">Количество</th>
+                                <th style="width: 35%;">Наименование работ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requestItemsTable">
+                            <tr>
+                                <td><input type="text" class="item-code" placeholder="Код" required></td>
+                                <td><input type="text" class="item-name" placeholder="Название" required></td>
+                                <td><input type="number" class="item-quantity" step="0.001" min="0.001" placeholder="Кол-во" required></td>
+                                <td><input type="text" class="item-work" placeholder="Для каких работ" required></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="item-code" placeholder="Код"></td>
+                                <td><input type="text" class="item-name" placeholder="Название"></td>
+                                <td><input type="number" class="item-quantity" step="0.001" min="0.001" placeholder="Кол-во"></td>
+                                <td><input type="text" class="item-work" placeholder="Для каких работ"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="item-code" placeholder="Код"></td>
+                                <td><input type="text" class="item-name" placeholder="Название"></td>
+                                <td><input type="number" class="item-quantity" step="0.001" min="0.001" placeholder="Кол-во"></td>
+                                <td><input type="text" class="item-work" placeholder="Для каких работ"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" class="item-code" placeholder="Код"></td>
+                                <td><input type="text" class="item-name" placeholder="Название"></td>
+                                <td><input type="number" class="item-quantity" step="0.001" min="0.001" placeholder="Кол-во"></td>
+                                <td><input type="text" class="item-work" placeholder="Для каких работ"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div style="margin-top: 10px;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="addRequestRow()">+ Добавить строку</button>
+                    </div>
+                    
+                    <div id="modalError" class="error-message" style="display: none; margin-top: 10px;"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('createRequestModal')">Отменить</button>
+                <button class="btn btn-success" onclick="submitRequest()">Отправить в работу</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script src="/js/user-dashboard.js"></script>
+</body>
+</html>

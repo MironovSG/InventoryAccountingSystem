@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Уведомления - Система учета ТМЦ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Система ТМЦ</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/user-dashboard.html" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span>Главная</span>
+                </a>
+                <a href="/user-catalog.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span>Каталог ТМЦ</span>
+                </a>
+                <a href="#" onclick="window.location.href='/user-dashboard.html'; return false;" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span>Создать заявку</span>
+                </a>
+                <a href="/user-my-requests.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span>Мои заявки</span>
+                </a>
+                <a href="/user-history.html" class="nav-item">
+                    <span class="nav-icon">📜</span>
+                    <span>История заявок</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name"></div>
+                        <div class="user-role"></div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
+            </div>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Уведомления</h1>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button class="btn btn-primary btn-sm" onclick="markAllAsRead()">✓ Отметить все как прочитанные</button>
+                    <button class="btn btn-secondary btn-sm" onclick="filterNotifications('unread')">Непрочитанные</button>
+                    <button class="btn btn-secondary btn-sm" onclick="filterNotifications('all')">Все</button>
+                </div>
+            </header>
+            
+            <div class="content-section">
+                <div id="notificationsList">
+                    <p style="text-align: center; color: #999;">Загрузка...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script>
+        let allNotifications = [];
+        let currentFilter = 'all';
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadNotifications();
+        });
+        
+        async function loadNotifications() {
+            try {
+                allNotifications = await apiRequest('/notifications');
+                displayNotifications();
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+                document.getElementById('notificationsList').innerHTML = 
+                    '<p style="text-align: center; color: #f44336;">Ошибка загрузки уведомлений</p>';
+            }
+        }
+        
+        function displayNotifications() {
+            const container = document.getElementById('notificationsList');
+            
+            let notifications = allNotifications;
+            if (currentFilter === 'unread') {
+                notifications = allNotifications.filter(n => !n.isRead);
+            }
+            
+            if (notifications.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999;">Нет уведомлений</p>';
+                return;
+            }
+            
+            container.innerHTML = notifications.map(notif => {
+                const iconMap = {
+                    'REQUEST_IN_PROGRESS': '▶️',
+                    'REQUEST_ISSUED': '✅',
+                    'REQUEST_REJECTED': '❌',
+                    'NEW_REQUEST': '📝'
+                };
+                
+                const icon = iconMap[notif.type] || '🔔';
+                
+                return `
+                    <div style="border-left: 4px solid ${notif.isRead ? '#ccc' : '#2196F3'}; padding: 15px; margin-bottom: 15px; background: ${notif.isRead ? '#f9f9f9' : '#e3f2fd'}; border-radius: 4px; cursor: pointer;" onclick="markAsRead(${notif.id})">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="flex: 1;">
+                                <div style="font-size: 24px; margin-bottom: 5px;">${icon}</div>
+                                <div style="font-weight: 600; font-size: 16px; margin-bottom: 5px;">${notif.title}</div>
+                                <div style="font-size: 14px; color: #666; margin-bottom: 10px;">${notif.message}</div>
+                                <div style="font-size: 12px; color: #999;">${formatDate(notif.createdAt)}</div>
+                            </div>
+                            ${!notif.isRead ? '<div style="width: 12px; height: 12px; background: #2196F3; border-radius: 50%; margin-left: 10px;"></div>' : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        async function markAsRead(id) {
+            try {
+                await apiRequest(`/notifications/${id}/read`, { method: 'PUT' });
+                await loadNotifications();
+            } catch (error) {
+                console.error('Error marking notification as read:', error);
+            }
+        }
+        
+        async function markAllAsRead() {
+            try {
+                await apiRequest('/notifications/read-all', { method: 'PUT' });
+                await loadNotifications();
+                alert('Все уведомления отмечены как прочитанные');
+            } catch (error) {
+                alert('Ошибка при обновлении уведомлений: ' + error.message);
+            }
+        }
+        
+        function filterNotifications(filter) {
+            currentFilter = filter;
+            displayNotifications();
+        }
+    </script>
+</body>
+</html>

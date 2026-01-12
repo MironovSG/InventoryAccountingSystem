@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои заявки - Система учета ТМЦ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Система ТМЦ</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/user-dashboard.html" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span>Главная</span>
+                </a>
+                <a href="/user-catalog.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span>Каталог ТМЦ</span>
+                </a>
+                <a href="#" onclick="window.location.href='/user-dashboard.html'; return false;" class="nav-item">
+                    <span class="nav-icon">➕</span>
+                    <span>Создать заявку</span>
+                </a>
+                <a href="/user-my-requests.html" class="nav-item active">
+                    <span class="nav-icon">📝</span>
+                    <span>Мои заявки</span>
+                </a>
+                <a href="/user-history.html" class="nav-item">
+                    <span class="nav-icon">📜</span>
+                    <span>История заявок</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name"></div>
+                        <div class="user-role"></div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
+            </div>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>Мои заявки на ТМЦ</h1>
+                <p>Просмотр созданных заявок (только для чтения)</p>
+            </header>
+            
+            <div class="content-section">
+                <div class="toolbar">
+                    <div>
+                        <select id="statusFilter" onchange="filterMyRequests()">
+                            <option value="">Все статусы</option>
+                            <option value="ACCEPTED">Открыта</option>
+                            <option value="IN_PROGRESS">В работе</option>
+                            <option value="ISSUED">Закрыта</option>
+                            <option value="REJECTED">Отклонена</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Номер заявки</th>
+                                <th>Дата заявки</th>
+                                <th>Статус</th>
+                                <th>Наименование работ</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="myRequestsTable">
+                            <tr>
+                                <td colspan="5" class="text-center">Загрузка...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 10px; color: #666; font-size: 14px;">
+                    Всего заявок: <span id="totalCount">0</span>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Модальное окно просмотра деталей заявки -->
+    <div id="requestDetailsModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3>Детали заявки <span id="requestNumberTitle"></span></h3>
+                <button class="modal-close" onclick="closeModal('requestDetailsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <strong>Дата создания:</strong> <span id="detailCreatedAt"></span>
+                        </div>
+                        <div>
+                            <strong>Статус:</strong> <span id="detailStatus"></span>
+                        </div>
+                        <div>
+                            <strong>Наименование работ:</strong> <span id="detailPurpose"></span>
+                        </div>
+                        <div>
+                            <strong>Дата выдачи:</strong> <span id="detailIssuedAt"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <h4>Материалы в заявке:</h4>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Артикул</th>
+                            <th>Название</th>
+                            <th>Запрошено</th>
+                            <th>Одобрено</th>
+                            <th>Выдано</th>
+                            <th>Ед. изм.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requestItemsDetails">
+                    </tbody>
+                </table>
+                
+                <div id="rejectionReason" style="display: none; margin-top: 20px; padding: 15px; background: #ffebee; border-left: 4px solid #f44336; border-radius: 4px;">
+                    <strong>Причина отклонения:</strong>
+                    <div id="rejectionReasonText" style="margin-top: 5px;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('requestDetailsModal')">Закрыть</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script>
+        let allMyRequests = [];
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadMyRequests();
+        });
+        
+        async function loadMyRequests() {
+            try {
+                allMyRequests = await apiRequest('/requests/my-requests');
+                displayMyRequests(allMyRequests);
+            } catch (error) {
+                console.error('Error loading my requests:', error);
+                document.getElementById('myRequestsTable').innerHTML = 
+                    '<tr><td colspan="5" class="text-center">Ошибка загрузки данных</td></tr>';
+            }
+        }
+        
+        function displayMyRequests(requests) {
+            const tbody = document.getElementById('myRequestsTable');
+            document.getElementById('totalCount').textContent = requests.length;
+            
+            if (requests.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">У вас пока нет заявок</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = requests.map(request => {
+                let statusText = '';
+                switch(request.status) {
+                    case 'ACCEPTED':
+                        statusText = 'Открыта';
+                        break;
+                    case 'IN_PROGRESS':
+                        statusText = 'В работе';
+                        break;
+                    case 'AWAITING_ISSUANCE':
+                        statusText = 'В работе';
+                        break;
+                    case 'ISSUED':
+                        statusText = 'Закрыта';
+                        break;
+                    case 'CLOSED':
+                        statusText = 'Закрыта';
+                        break;
+                    case 'REJECTED':
+                        statusText = 'Отклонена';
+                        break;
+                    default:
+                        statusText = request.status;
+                }
+                
+                return `
+                    <tr>
+                        <td>${request.requestNumber}</td>
+                        <td>${formatDateOnly(request.createdAt)}</td>
+                        <td>${getRequestStatusBadge(request.status)}</td>
+                        <td>${request.purpose}</td>
+                        <td>
+                            <button class="btn btn-info btn-sm" onclick="viewRequestDetails(${request.id})">👁️ Просмотр</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function filterMyRequests() {
+            const status = document.getElementById('statusFilter').value;
+            if (status === '') {
+                displayMyRequests(allMyRequests);
+            } else {
+                const filtered = allMyRequests.filter(r => r.status === status);
+                displayMyRequests(filtered);
+            }
+        }
+        
+        async function viewRequestDetails(id) {
+            try {
+                const request = await apiRequest(`/requests/${id}`);
+                
+                document.getElementById('requestNumberTitle').textContent = request.requestNumber;
+                document.getElementById('detailCreatedAt').textContent = formatDate(request.createdAt);
+                document.getElementById('detailStatus').innerHTML = getRequestStatusBadge(request.status);
+                document.getElementById('detailPurpose').textContent = request.purpose;
+                document.getElementById('detailIssuedAt').textContent = request.issuedAt ? formatDate(request.issuedAt) : '-';
+                
+                // Отображение материалов
+                const itemsTable = document.getElementById('requestItemsDetails');
+                itemsTable.innerHTML = request.items.map(item => `
+                    <tr>
+                        <td>${item.materialArticle}</td>
+                        <td>${item.materialName}</td>
+                        <td>${formatNumber(item.requestedQuantity, 0)}</td>
+                        <td>${item.approvedQuantity ? formatNumber(item.approvedQuantity, 0) : '-'}</td>
+                        <td>${item.issuedQuantity ? formatNumber(item.issuedQuantity, 0) : '-'}</td>
+                        <td>${item.unitOfMeasure}</td>
+                    </tr>
+                `).join('');
+                
+                // Причина отклонения
+                if (request.status === 'REJECTED' && request.rejectionReason) {
+                    document.getElementById('rejectionReason').style.display = 'block';
+                    document.getElementById('rejectionReasonText').textContent = request.rejectionReason;
+                } else {
+                    document.getElementById('rejectionReason').style.display = 'none';
+                }
+                
+                openModal('requestDetailsModal');
+            } catch (error) {
+                alert('Ошибка при загрузке деталей заявки: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
