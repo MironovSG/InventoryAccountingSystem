@@ -67,6 +67,7 @@ public class User extends BaseEntity {
     private String workGroup; // АРМ, ГОТО, ГОКС
     
     @Column(name = "active", nullable = false)
+    @Builder.Default
     private Boolean active = true;
     
     @Column(name = "last_login")

@@ -22,24 +22,8 @@ public class NotificationService {
     @Async
     public void sendRequestCreatedNotification(Request request) {
         try {
-            String subject = "Новая заявка на выдачу ТМЦ: " + request.getRequestNumber();
-            String message = String.format(
-                    "Создана новая заявка на выдачу ТМЦ\n\n" +
-                    "Номер заявки: %s\n" +
-                    "Инициатор: %s\n" +
-                    "Подразделение: %s\n" +
-                    "Назначение: %s\n" +
-                    "Количество позиций: %d\n\n" +
-                    "Дата создания: %s",
-                    request.getRequestNumber(),
-                    request.getRequester().getFullName(),
-                    request.getDepartment().getName(),
-                    request.getPurpose(),
-                    request.getItems().size(),
-                    request.getCreatedAt()
-            );
-            
             // Отправка email (здесь нужно добавить получателей - МОЛ)
+            // TODO: Implement email sending when recipients are determined
             log.info("Отправлено уведомление о создании заявки: {}", request.getRequestNumber());
         } catch (Exception e) {
             log.error("Ошибка при отправке уведомления о создании заявки", e);
@@ -76,16 +60,7 @@ public class NotificationService {
     @Async
     public void sendLowStockNotification(String materialName, String article) {
         try {
-            String subject = "Низкий уровень запасов: " + materialName;
-            String message = String.format(
-                    "Внимание! Низкий уровень запасов материала\n\n" +
-                    "Артикул: %s\n" +
-                    "Название: %s\n\n" +
-                    "Необходимо пополнение запасов.",
-                    article,
-                    materialName
-            );
-            
+            // TODO: Implement email sending when recipients are determined
             log.info("Отправлено уведомление о низком уровне запасов: {} - {}", article, materialName);
         } catch (Exception e) {
             log.error("Ошибка при отправке уведомления о низком уровне запасов", e);

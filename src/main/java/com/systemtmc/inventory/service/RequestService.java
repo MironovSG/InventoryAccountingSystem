@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 public class RequestService {
     
     private final RequestRepository requestRepository;
-    private final RequestItemRepository requestItemRepository;
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
     private final MaterialRepository materialRepository;

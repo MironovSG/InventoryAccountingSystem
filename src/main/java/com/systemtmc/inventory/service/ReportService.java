@@ -6,7 +6,6 @@ import com.systemtmc.inventory.model.entity.MaterialMovement;
 import com.systemtmc.inventory.model.entity.Request;
 import com.systemtmc.inventory.model.enums.RequestStatus;
 import com.systemtmc.inventory.repository.MaterialMovementRepository;
-import com.systemtmc.inventory.repository.MaterialRepository;
 import com.systemtmc.inventory.repository.RequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +34,6 @@ public class ReportService {
     
     private final RequestRepository requestRepository;
     private final MaterialMovementRepository movementRepository;
-    private final MaterialRepository materialRepository;
     private final RequestService requestService;
     private final MaterialMovementService movementService;
     

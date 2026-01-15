@@ -74,6 +74,7 @@ public class Request extends BaseEntity {
     private String rejectionReason;
     
     @Column(name = "priority")
+    @Builder.Default
     private Integer priority = 0;
     
     @Column(name = "expected_date")
