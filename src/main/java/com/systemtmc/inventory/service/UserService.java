@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +46,8 @@ public class UserService {
     
     @Transactional(readOnly = true)
     public UserDTO getUserById(Long id) {
-        User user = userRepository.findById(id)
+        Long nonNullId = Objects.requireNonNull(id, "ID пользователя не может быть null");
+        User user = userRepository.findById(nonNullId)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден с ID: " + id));
         return convertToDTO(user);
     }
@@ -102,7 +104,8 @@ public class UserService {
         user.setActive(userDTO.getActive() != null ? userDTO.getActive() : true);
         
         if (userDTO.getDepartmentId() != null) {
-            Department department = departmentRepository.findById(userDTO.getDepartmentId())
+            Long departmentId = Objects.requireNonNull(userDTO.getDepartmentId(), "ID подразделения не может быть null");
+            Department department = departmentRepository.findById(departmentId)
                     .orElseThrow(() -> new RuntimeException("Подразделение не найдено"));
             user.setDepartment(department);
         }
@@ -117,7 +120,8 @@ public class UserService {
     
     @Transactional
     public UserDTO updateUser(Long id, UserDTO userDTO) {
-        User user = userRepository.findById(id)
+        Long nonNullId = Objects.requireNonNull(id, "ID пользователя не может быть null");
+        User user = userRepository.findById(nonNullId)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
         
         // Проверка уникальности при изменении
@@ -141,7 +145,8 @@ public class UserService {
         user.setActive(userDTO.getActive());
         
         if (userDTO.getDepartmentId() != null) {
-            Department department = departmentRepository.findById(userDTO.getDepartmentId())
+            Long departmentId = Objects.requireNonNull(userDTO.getDepartmentId(), "ID подразделения не может быть null");
+            Department department = departmentRepository.findById(departmentId)
                     .orElseThrow(() -> new RuntimeException("Подразделение не найдено"));
             user.setDepartment(department);
         }
@@ -161,7 +166,8 @@ public class UserService {
     
     @Transactional
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id)
+        Long nonNullId = Objects.requireNonNull(id, "ID пользователя не может быть null");
+        User user = userRepository.findById(nonNullId)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
         
         user.setDeleted(true);
@@ -176,7 +182,8 @@ public class UserService {
     
     @Transactional
     public void updateLastLogin(Long userId) {
-        User user = userRepository.findById(userId)
+        Long nonNullUserId = Objects.requireNonNull(userId, "ID пользователя не может быть null");
+        User user = userRepository.findById(nonNullUserId)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
         user.setLastLogin(LocalDateTime.now());
         userRepository.save(user);
