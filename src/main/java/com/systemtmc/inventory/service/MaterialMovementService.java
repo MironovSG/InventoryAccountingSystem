@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -52,6 +53,7 @@ public class MaterialMovementService {
     }
     
     @Transactional
+    @SuppressWarnings("null")
     public MaterialMovementDTO createMovement(
             Long materialId,
             MovementType movementType,
@@ -62,7 +64,8 @@ public class MaterialMovementService {
             String documentNumber,
             String notes) {
         
-        Material material = materialRepository.findById(materialId)
+        Long nonNullMaterialId = Objects.requireNonNull(materialId, "ID материала не может быть null");
+        Material material = materialRepository.findById(nonNullMaterialId)
                 .orElseThrow(() -> new RuntimeException("Материал не найден"));
         
         BigDecimal quantityBefore = material.getCurrentQuantity();
@@ -123,9 +126,13 @@ public class MaterialMovementService {
         material.setCurrentQuantity(quantityAfter);
         materialRepository.save(material);
         
-        MaterialMovement savedMovement = movementRepository.save(movement);
+        MaterialMovement savedMovement = Objects.requireNonNull(
+                movementRepository.save(movement), 
+                "Ошибка сохранения движения материала");
+        Long movementId = Objects.requireNonNull(savedMovement.getId(), 
+                "ID движения материала не может быть null");
         
-        auditService.logAction("CREATE_MOVEMENT", "MaterialMovement", savedMovement.getId(), 
+        auditService.logAction("CREATE_MOVEMENT", "MaterialMovement", movementId, 
                 String.format("%s материала %s: %s %s (остаток: %s -> %s)",
                         movementType.getDisplayName(),
                         material.getArticle(),

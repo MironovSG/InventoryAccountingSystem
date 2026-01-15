@@ -50,4 +50,11 @@ public class AuditLog extends BaseEntity {
     
     @Column(name = "user_agent", length = 500)
     private String userAgent;
+    
+    /**
+     * Alias для createdAt для совместимости с контроллером
+     */
+    public java.time.LocalDateTime getTimestamp() {
+        return getCreatedAt();
+    }
 }

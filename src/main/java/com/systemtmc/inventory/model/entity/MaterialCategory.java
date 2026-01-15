@@ -48,5 +48,6 @@ public class MaterialCategory extends BaseEntity {
     private List<Material> materials = new ArrayList<>();
     
     @Column(name = "active", nullable = false)
+    @Builder.Default
     private Boolean active = true;
 }

@@ -48,5 +48,6 @@ public class Department extends BaseEntity {
     private List<User> users = new ArrayList<>();
     
     @Column(name = "active", nullable = false)
+    @Builder.Default
     private Boolean active = true;
 }
