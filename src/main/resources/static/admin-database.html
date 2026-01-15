@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление БД - Система учета ТМЦ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🔧 Администратор</h2>
+                <p style="font-size: 12px; color: #999;">Полный доступ</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/admin-dashboard.html" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span>Панель мониторинга</span>
+                </a>
+                
+                <a href="/manager-users.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>Управление пользователями</span>
+                </a>
+                
+                <a href="/admin-database.html" class="nav-item active">
+                    <span class="nav-icon">🗄️</span>
+                    <span>Управление БД</span>
+                </a>
+                
+                <a href="/admin-logs.html" class="nav-item">
+                    <span class="nav-icon">📋</span>
+                    <span>Журнал логов</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name"></div>
+                        <div class="user-role"></div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
+            </div>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>🗄️ Управление базой данных</h1>
+                <p>Прямой доступ к таблицам и данным системы</p>
+            </header>
+            
+            <!-- Список таблиц -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>📊 Таблицы базы данных</h2>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card" onclick="loadTableData('users')" style="cursor: pointer;">
+                        <div class="stat-icon" style="background-color: #667eea;">👥</div>
+                        <div class="stat-content">
+                            <div class="stat-label">users</div>
+                            <div class="stat-value" id="count_users" style="font-size: 18px;">0 записей</div>
+                            <div style="font-size: 12px; color: #999;">Пользователи системы</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="loadTableData('materials')" style="cursor: pointer;">
+                        <div class="stat-icon" style="background-color: #2196F3;">📦</div>
+                        <div class="stat-content">
+                            <div class="stat-label">materials</div>
+                            <div class="stat-value" id="count_materials" style="font-size: 18px;">0 записей</div>
+                            <div style="font-size: 12px; color: #999;">Материалы ТМЦ</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="loadTableData('requests')" style="cursor: pointer;">
+                        <div class="stat-icon" style="background-color: #4CAF50;">📝</div>
+                        <div class="stat-content">
+                            <div class="stat-label">requests</div>
+                            <div class="stat-value" id="count_requests" style="font-size: 18px;">0 записей</div>
+                            <div style="font-size: 12px; color: #999;">Заявки на ТМЦ</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="loadTableData('departments')" style="cursor: pointer;">
+                        <div class="stat-icon" style="background-color: #f44336;">🏢</div>
+                        <div class="stat-content">
+                            <div class="stat-label">departments</div>
+                            <div class="stat-value" id="count_departments" style="font-size: 18px;">0 записей</div>
+                            <div style="font-size: 12px; color: #999;">Подразделения</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="loadTableData('material_categories')" style="cursor: pointer;">
+                        <div class="stat-icon" style="background-color: #00BCD4;">🏷️</div>
+                        <div class="stat-content">
+                            <div class="stat-label">material_categories</div>
+                            <div class="stat-value" id="count_categories" style="font-size: 18px;">0 записей</div>
+                            <div style="font-size: 12px; color: #999;">Категории материалов</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="loadTableData('audit_logs')" style="cursor: pointer;">
+                        <div class="stat-icon" style="background-color: #FF9800;">📋</div>
+                        <div class="stat-content">
+                            <div class="stat-label">audit_logs</div>
+                            <div class="stat-value" id="count_logs" style="font-size: 18px;">0 записей</div>
+                            <div style="font-size: 12px; color: #999;">Журнал аудита</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="loadTableData('material_movements')" style="cursor: pointer;">
+                        <div class="stat-icon" style="background-color: #9C27B0;">📦</div>
+                        <div class="stat-content">
+                            <div class="stat-label">material_movements</div>
+                            <div class="stat-value" id="count_movements" style="font-size: 18px;">0 записей</div>
+                            <div style="font-size: 12px; color: #999;">Движения материалов</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="loadTableData('notifications')" style="cursor: pointer;">
+                        <div class="stat-icon" style="background-color: #E91E63;">🔔</div>
+                        <div class="stat-content">
+                            <div class="stat-label">notifications</div>
+                            <div class="stat-value" id="count_notifications" style="font-size: 18px;">0 записей</div>
+                            <div style="font-size: 12px; color: #999;">Уведомления</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Просмотр данных таблицы -->
+            <div class="content-section" id="tableDataSection" style="display: none;">
+                <div class="section-header">
+                    <h2>📊 Данные таблицы: <span id="currentTable"></span></h2>
+                    <button class="btn btn-secondary btn-sm" onclick="closeTableView()">✕ Закрыть</button>
+                </div>
+                
+                <div class="toolbar">
+                    <div>
+                        <button class="btn btn-primary btn-sm" onclick="window.location.href='/manager-users.html'" id="editButton">
+                            ✏️ Редактировать через интерфейс
+                        </button>
+                    </div>
+                    <div>
+                        <input type="text" id="searchTable" placeholder="Поиск..." onkeyup="filterTableData()">
+                    </div>
+                </div>
+                
+                <div id="tableDataContainer" style="overflow-x: auto;">
+                    <p class="text-center">Выберите таблицу для просмотра</p>
+                </div>
+            </div>
+            
+            <!-- Информация о БД -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>ℹ️ Информация о базе данных</h2>
+                </div>
+                
+                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div>
+                            <strong>Тип СУБД:</strong> PostgreSQL
+                        </div>
+                        <div>
+                            <strong>Версия:</strong> <span id="dbVersion">-</span>
+                        </div>
+                        <div>
+                            <strong>Всего таблиц:</strong> 8
+                        </div>
+                        <div>
+                            <strong>Всего записей:</strong> <span id="totalRecords">0</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd;">
+                        <strong>⚠️ Внимание:</strong> Прямое редактирование данных в базе может привести к нарушению целостности системы. 
+                        Используйте специализированные интерфейсы для управления данными.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script>
+        let currentTableData = [];
+        let filteredTableData = [];
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadTableCounts();
+        });
+        
+        async function loadTableCounts() {
+            try {
+                const users = await apiRequest('/users');
+                document.getElementById('count_users').textContent = users.length + ' записей';
+                
+                const materials = await apiRequest('/materials');
+                document.getElementById('count_materials').textContent = materials.length + ' записей';
+                
+                const requests = await apiRequest('/requests');
+                document.getElementById('count_requests').textContent = requests.length + ' записей';
+                
+                const departments = await apiRequest('/departments');
+                document.getElementById('count_departments').textContent = departments.length + ' записей';
+                
+                const categories = await apiRequest('/material-categories');
+                document.getElementById('count_categories').textContent = categories.length + ' записей';
+                
+                const logs = await apiRequest('/audit-logs');
+                document.getElementById('count_logs').textContent = logs.length + ' записей';
+                
+                const total = users.length + materials.length + requests.length + departments.length + categories.length + logs.length;
+                document.getElementById('totalRecords').textContent = total;
+            } catch (error) {
+                console.error('Error loading table counts:', error);
+            }
+        }
+        
+        async function loadTableData(tableName) {
+            try {
+                let data = [];
+                let endpoint = '';
+                let editUrl = '';
+                
+                switch(tableName) {
+                    case 'users':
+                        endpoint = '/users';
+                        editUrl = '/manager-users.html';
+                        break;
+                    case 'materials':
+                        endpoint = '/materials';
+                        editUrl = '/mol-catalog.html';
+                        break;
+                    case 'requests':
+                        endpoint = '/requests';
+                        editUrl = '/mol-requests.html';
+                        break;
+                    case 'departments':
+                        endpoint = '/departments';
+                        editUrl = '/departments.html';
+                        break;
+                    case 'material_categories':
+                        endpoint = '/material-categories';
+                        editUrl = '/categories.html';
+                        break;
+                    case 'audit_logs':
+                        endpoint = '/audit-logs';
+                        editUrl = '/admin-logs.html';
+                        break;
+                    default:
+                        alert('Таблица не поддерживается для просмотра');
+                        return;
+                }
+                
+                data = await apiRequest(endpoint);
+                currentTableData = data;
+                filteredTableData = data;
+                
+                document.getElementById('currentTable').textContent = tableName;
+                document.getElementById('tableDataSection').style.display = 'block';
+                document.getElementById('editButton').onclick = () => window.location.href = editUrl;
+                
+                displayTableData(data);
+                
+                // Прокрутка к таблице
+                document.getElementById('tableDataSection').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                alert('Ошибка при загрузке данных: ' + error.message);
+            }
+        }
+        
+        function displayTableData(data) {
+            if (data.length === 0) {
+                document.getElementById('tableDataContainer').innerHTML = '<p class="text-center">Нет данных</p>';
+                return;
+            }
+            
+            // Получить все ключи из первого объекта
+            const keys = Object.keys(data[0]);
+            
+            // Создать таблицу
+            let html = '<table class="data-table"><thead><tr>';
+            keys.forEach(key => {
+                html += `<th>${key}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            
+            data.forEach(row => {
+                html += '<tr>';
+                keys.forEach(key => {
+                    let value = row[key];
+                    if (value === null || value === undefined) {
+                        value = '-';
+                    } else if (typeof value === 'boolean') {
+                        value = value ? '✓' : '✗';
+                    } else if (typeof value === 'object') {
+                        value = JSON.stringify(value);
+                    } else {
+                        value = String(value);
+                    }
+                    
+                    // Обрезать длинные значения
+                    if (value.length > 50) {
+                        value = value.substring(0, 50) + '...';
+                    }
+                    
+                    html += `<td title="${value}">${value}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            document.getElementById('tableDataContainer').innerHTML = html;
+        }
+        
+        function filterTableData() {
+            const search = document.getElementById('searchTable').value.toLowerCase();
+            
+            if (!search) {
+                filteredTableData = currentTableData;
+            } else {
+                filteredTableData = currentTableData.filter(row => {
+                    return Object.values(row).some(value => {
+                        if (value === null || value === undefined) return false;
+                        return String(value).toLowerCase().includes(search);
+                    });
+                });
+            }
+            
+            displayTableData(filteredTableData);
+        }
+        
+        function closeTableView() {
+            document.getElementById('tableDataSection').style.display = 'none';
+            document.getElementById('searchTable').value = '';
+        }
+    </script>
+</body>
+</html>

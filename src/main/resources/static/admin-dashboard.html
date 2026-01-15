@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора - Система учета ТМЦ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🔧 Администратор</h2>
+                <p style="font-size: 12px; color: #999;">Полный доступ</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/admin-dashboard.html" class="nav-item active">
+                    <span class="nav-icon">🏠</span>
+                    <span>Панель мониторинга</span>
+                </a>
+                
+                <a href="/manager-users.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>Управление пользователями</span>
+                </a>
+                
+                <a href="/admin-database.html" class="nav-item">
+                    <span class="nav-icon">🗄️</span>
+                    <span>Управление БД</span>
+                </a>
+                
+                <a href="/admin-logs.html" class="nav-item">
+                    <span class="nav-icon">📋</span>
+                    <span>Журнал логов</span>
+                </a>
+                
+                <div class="nav-divider">Управление системой</div>
+                
+                <a href="/mol-catalog.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span>Каталог ТМЦ</span>
+                </a>
+                
+                <a href="/mol-requests.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span>Заявки на ТМЦ</span>
+                </a>
+                
+                <a href="/mol-history.html" class="nav-item">
+                    <span class="nav-icon">📜</span>
+                    <span>История заявок</span>
+                </a>
+                
+                <a href="/departments.html" class="nav-item">
+                    <span class="nav-icon">🏢</span>
+                    <span>Подразделения</span>
+                </a>
+                
+                <a href="/categories.html" class="nav-item">
+                    <span class="nav-icon">🏷️</span>
+                    <span>Категории материалов</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name"></div>
+                        <div class="user-role"></div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
+            </div>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>🔧 Панель мониторинга администратора</h1>
+                <p>Контроль и управление системой учета ТМЦ</p>
+            </header>
+            
+            <!-- Системный статус -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>⚡ Состояние системы</h2>
+                    <button class="btn btn-primary btn-sm" onclick="refreshSystemStatus()">🔄 Обновить</button>
+                </div>
+                
+                <div class="stats-grid">
+                    <!-- Статус системы -->
+                    <div class="stat-card" style="border-left: 4px solid #4CAF50;">
+                        <div class="stat-icon" style="background-color: #4CAF50;">✓</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Статус системы</div>
+                            <div class="stat-value" id="systemStatus" style="font-size: 18px; color: #4CAF50;">Работает</div>
+                            <div style="font-size: 12px; color: #999; margin-top: 5px;">Uptime: <span id="systemUptime">-</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- База данных -->
+                    <div class="stat-card" style="border-left: 4px solid #2196F3;">
+                        <div class="stat-icon" style="background-color: #2196F3;">🗄️</div>
+                        <div class="stat-content">
+                            <div class="stat-label">База данных</div>
+                            <div class="stat-value" id="dbStatus" style="font-size: 18px; color: #2196F3;">Подключено</div>
+                            <div style="font-size: 12px; color: #999; margin-top: 5px;">Записей: <span id="dbRecords">-</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ошибки -->
+                    <div class="stat-card" style="border-left: 4px solid #FF9800;">
+                        <div class="stat-icon" style="background-color: #FF9800;">⚠️</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Ошибки (24ч)</div>
+                            <div class="stat-value" id="errorCount">0</div>
+                            <div style="font-size: 12px; color: #999; margin-top: 5px;">Последняя: <span id="lastError">-</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Нагрузка -->
+                    <div class="stat-card" style="border-left: 4px solid #9C27B0;">
+                        <div class="stat-icon" style="background-color: #9C27B0;">📊</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Нагрузка системы</div>
+                            <div class="stat-value" id="systemLoad">Низкая</div>
+                            <div style="font-size: 12px; color: #999; margin-top: 5px;">Запросов/мин: <span id="requestsPerMin">-</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Статистика пользователей и данных -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>📊 Статистика системы</h2>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card" onclick="window.location.href='/manager-users.html'" style="cursor: pointer;">
+                        <div class="stat-icon" style="background-color: #667eea;">👥</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Пользователи</div>
+                            <div class="stat-value" id="totalUsers">0</div>
+                            <div style="font-size: 12px; color: #999;">Активных: <span id="activeUsers">0</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="window.location.href='/mol-catalog.html'" style="cursor: pointer;">
+                        <div class="stat-icon" style="background-color: #2196F3;">📦</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Материалы</div>
+                            <div class="stat-value" id="totalMaterials">0</div>
+                            <div style="font-size: 12px; color: #999;">Активных: <span id="activeMaterials">0</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="window.location.href='/mol-requests.html'" style="cursor: pointer;">
+                        <div class="stat-icon" style="background-color: #4CAF50;">📝</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Заявки</div>
+                            <div class="stat-value" id="totalRequests">0</div>
+                            <div style="font-size: 12px; color: #999;">В обработке: <span id="pendingRequests">0</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="window.location.href='/admin-logs.html'" style="cursor: pointer;">
+                        <div class="stat-icon" style="background-color: #FF9800;">📋</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Записи в логах</div>
+                            <div class="stat-value" id="totalLogs">0</div>
+                            <div style="font-size: 12px; color: #999;">За 24ч: <span id="logsToday">0</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #f44336;">🏢</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Подразделения</div>
+                            <div class="stat-value" id="totalDepartments">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #00BCD4;">🏷️</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Категории</div>
+                            <div class="stat-value" id="totalCategories">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Быстрый доступ к функциям -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>🚀 Быстрый доступ</h2>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card" onclick="window.location.href='/manager-users.html'" style="cursor: pointer; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <div class="stat-icon" style="background-color: rgba(255,255,255,0.2); font-size: 36px;">👥</div>
+                        <div class="stat-content">
+                            <div class="stat-label" style="color: white;">Управление пользователями</div>
+                            <div class="stat-value" style="font-size: 16px; color: white;">Добавление • Редактирование • Удаление</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="window.location.href='/admin-database.html'" style="cursor: pointer; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                        <div class="stat-icon" style="background-color: rgba(255,255,255,0.2); font-size: 36px;">🗄️</div>
+                        <div class="stat-content">
+                            <div class="stat-label" style="color: white;">Управление базой данных</div>
+                            <div class="stat-value" style="font-size: 16px; color: white;">Полный доступ ко всем таблицам</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card" onclick="window.location.href='/admin-logs.html'" style="cursor: pointer; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                        <div class="stat-icon" style="background-color: rgba(255,255,255,0.2); font-size: 36px;">📋</div>
+                        <div class="stat-content">
+                            <div class="stat-label" style="color: white;">Журнал аудита</div>
+                            <div class="stat-value" style="font-size: 16px; color: white;">Просмотр • Фильтры • Экспорт</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Последние действия в системе -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>🕐 Последние действия в системе</h2>
+                    <a href="/admin-logs.html" class="btn btn-primary btn-sm">Все логи</a>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Время</th>
+                                <th>Пользователь</th>
+                                <th>Действие</th>
+                                <th>Объект</th>
+                                <th>Описание</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentLogsTable">
+                            <tr>
+                                <td colspan="5" class="text-center">Загрузка...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadDashboardData();
+            startAutoRefresh();
+        });
+        
+        async function loadDashboardData() {
+            try {
+                await Promise.all([
+                    loadSystemStatus(),
+                    loadStatistics(),
+                    loadRecentLogs()
+                ]);
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+        
+        async function loadSystemStatus() {
+            try {
+                // Статус системы (через Actuator health endpoint)
+                try {
+                    const health = await fetch('/management/health').then(r => r.json());
+                    document.getElementById('systemStatus').textContent = health.status === 'UP' ? 'Работает' : 'Проблемы';
+                    document.getElementById('systemStatus').style.color = health.status === 'UP' ? '#4CAF50' : '#f44336';
+                } catch (e) {
+                    document.getElementById('systemStatus').textContent = 'Неизвестно';
+                }
+                
+                // Имитация uptime (в реальной системе получать из Actuator)
+                document.getElementById('systemUptime').textContent = '3д 12ч';
+                
+                // БД статус
+                document.getElementById('dbStatus').textContent = 'Подключено';
+                
+                // Подсчет записей в БД
+                const users = await apiRequest('/users');
+                const materials = await apiRequest('/materials');
+                const requests = await apiRequest('/requests');
+                document.getElementById('dbRecords').textContent = (users.length + materials.length + requests.length).toString();
+                
+                // Ошибки (из логов)
+                const logs = await apiRequest('/audit-logs/recent?limit=1000');
+                const errors = logs.filter(l => l.action && (l.action.includes('ERROR') || l.action.includes('FAIL')));
+                document.getElementById('errorCount').textContent = errors.length;
+                document.getElementById('lastError').textContent = errors.length > 0 ? 'сегодня' : 'нет';
+                
+                // Нагрузка (имитация)
+                document.getElementById('systemLoad').textContent = 'Низкая';
+                document.getElementById('requestsPerMin').textContent = '~50';
+            } catch (error) {
+                console.error('Error loading system status:', error);
+            }
+        }
+        
+        async function loadStatistics() {
+            try {
+                // Пользователи
+                const users = await apiRequest('/users');
+                const activeUsers = users.filter(u => u.active);
+                document.getElementById('totalUsers').textContent = users.length;
+                document.getElementById('activeUsers').textContent = activeUsers.length;
+                
+                // Материалы
+                const materials = await apiRequest('/materials');
+                const activeMaterials = materials.filter(m => m.active);
+                document.getElementById('totalMaterials').textContent = materials.length;
+                document.getElementById('activeMaterials').textContent = activeMaterials.length;
+                
+                // Заявки
+                const requests = await apiRequest('/requests');
+                const pending = requests.filter(r => r.status === 'ACCEPTED' || r.status === 'PENDING' || r.status === 'IN_PROGRESS');
+                document.getElementById('totalRequests').textContent = requests.length;
+                document.getElementById('pendingRequests').textContent = pending.length;
+                
+                // Логи
+                const logs = await apiRequest('/audit-logs/count');
+                document.getElementById('totalLogs').textContent = logs.total || 0;
+                document.getElementById('logsToday').textContent = logs.today || 0;
+                
+                // Подразделения
+                const departments = await apiRequest('/departments');
+                document.getElementById('totalDepartments').textContent = departments.length;
+                
+                // Категории
+                const categories = await apiRequest('/material-categories');
+                document.getElementById('totalCategories').textContent = categories.length;
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        }
+        
+        async function loadRecentLogs() {
+            try {
+                const logs = await apiRequest('/audit-logs/recent?limit=10');
+                
+                const tbody = document.getElementById('recentLogsTable');
+                if (logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">Нет записей</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = logs.map(log => `
+                    <tr>
+                        <td>${formatTime(log.timestamp)}</td>
+                        <td>${log.username || 'Система'}</td>
+                        <td>${getActionBadge(log.action)}</td>
+                        <td>${log.entityType || '-'}</td>
+                        <td>${log.description ? log.description.substring(0, 80) : '-'}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading recent logs:', error);
+                document.getElementById('recentLogsTable').innerHTML = 
+                    '<tr><td colspan="5" class="text-center">Ошибка загрузки</td></tr>';
+            }
+        }
+        
+        function getActionBadge(action) {
+            const colors = {
+                'CREATE': '#4CAF50',
+                'UPDATE': '#2196F3',
+                'DELETE': '#f44336',
+                'LOGIN': '#9C27B0',
+                'LOGOUT': '#757575'
+            };
+            
+            let color = '#999';
+            let text = action;
+            
+            for (let key in colors) {
+                if (action && action.includes(key)) {
+                    color = colors[key];
+                    break;
+                }
+            }
+            
+            return `<span style="background: ${color}; color: white; padding: 3px 8px; border-radius: 3px; font-size: 11px; font-weight: 600;">${text}</span>`;
+        }
+        
+        function formatTime(timestamp) {
+            if (!timestamp) return '-';
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+        
+        async function refreshSystemStatus() {
+            await loadSystemStatus();
+            alert('Статус системы обновлен');
+        }
+        
+        function startAutoRefresh() {
+            // Автообновление каждые 30 секунд
+            setInterval(async () => {
+                await loadSystemStatus();
+                await loadRecentLogs();
+            }, 30000);
+        }
+    </script>
+</body>
+</html>

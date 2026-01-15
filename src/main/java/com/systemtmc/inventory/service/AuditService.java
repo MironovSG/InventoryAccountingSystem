@@ -26,6 +26,7 @@ public class AuditService {
     private final AuditLogRepository auditLogRepository;
     private final UserRepository userRepository;
     
+    @SuppressWarnings("null")
     @Transactional
     public void logAction(String action, String entityType, Long entityId, String description) {
         try {
@@ -40,6 +41,7 @@ public class AuditService {
             
             if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
                 UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+                @SuppressWarnings("null")
                 User user = userRepository.findById(userPrincipal.getId()).orElse(null);
                 
                 auditLog.setUser(user);
@@ -53,6 +55,7 @@ public class AuditService {
         }
     }
     
+    @SuppressWarnings("null")
     @Transactional
     public void logAction(String action, String entityType, Long entityId, 
                          String description, String oldValue, String newValue) {
@@ -70,6 +73,7 @@ public class AuditService {
             
             if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
                 UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+                @SuppressWarnings("null")
                 User user = userRepository.findById(userPrincipal.getId()).orElse(null);
                 
                 auditLog.setUser(user);

@@ -20,7 +20,7 @@ INSERT INTO material_categories (code, name, description, active) VALUES
 INSERT INTO users (username, password, email, last_name, first_name, role, active) VALUES
 ('admin', '$2a$10$8.H7Gk9L0OzV3d8Ew8GUCe5vB7YFz8YE9.nNL2L1tJvdC8PzZvGRG', 'admin@company.com', 'Администратор', 'Системный', 'ADMIN', true);
 
--- Создание пользователя, МОЛ,
+-- Создание пользователя МОЛ
 -- Пароль: mol123
 INSERT INTO users (username, password, email, last_name, first_name, role, department_id, active) VALUES
 ('mol_user', '$2a$10$8.H7Gk9L0OzV3d8Ew8GUCe5vB7YFz8YE9.nNL2L1tJvdC8PzZvGRG', 'mol@company.com', 'Кладовщик', 'Иван', 'MOL', 4, true);

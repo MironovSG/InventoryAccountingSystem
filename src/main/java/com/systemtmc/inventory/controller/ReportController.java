@@ -47,7 +47,8 @@ public class ReportController {
         return ResponseEntity.ok(reportService.generateMaterialConsumptionReport(startDate, endDate, departmentId));
     }
     
-    @GetMapping("/requests/export/excel")
+    @SuppressWarnings("null")
+@GetMapping("/requests/export/excel")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'MOL')")
     @Operation(summary = "Экспорт отчета по заявкам в Excel")
     public ResponseEntity<byte[]> exportRequestsReportToExcel(
@@ -66,7 +67,8 @@ public class ReportController {
                 .body(data);
     }
     
-    @GetMapping("/material-consumption/export/excel")
+    @SuppressWarnings("null")
+@GetMapping("/material-consumption/export/excel")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'MOL')")
     @Operation(summary = "Экспорт отчета по расходу материалов в Excel")
     public ResponseEntity<byte[]> exportMaterialConsumptionReportToExcel(

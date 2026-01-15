@@ -17,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 /**
  * Контроллер для аутентификации и авторизации
  */
@@ -47,7 +49,8 @@ public class AuthController {
             String jwt = tokenProvider.generateToken(authentication);
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
             
-            User user = userRepository.findById(userPrincipal.getId())
+            Long userId = Objects.requireNonNull(userPrincipal.getId(), "ID пользователя не задан");
+            User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
             
             // Обновление времени последнего входа

@@ -94,9 +94,9 @@ management:
       enabled: true
     prometheus:
       enabled: true
-  prometheus:
-    metrics:
-      export:
+  metrics:
+    export:
+      prometheus:
         enabled: true
 
 # Logging Configuration
