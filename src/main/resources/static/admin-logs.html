@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Журнал аудита - Система учета ТМЦ</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Боковое меню -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🔧 Администратор</h2>
+                <p style="font-size: 12px; color: #999;">Полный доступ</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/admin-dashboard.html" class="nav-item">
+                    <span class="nav-icon">🏠</span>
+                    <span>Панель мониторинга</span>
+                </a>
+                
+                <a href="/manager-users.html" class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>Управление пользователями</span>
+                </a>
+                
+                <a href="/admin-database.html" class="nav-item">
+                    <span class="nav-icon">🗄️</span>
+                    <span>Управление БД</span>
+                </a>
+                
+                <a href="/admin-logs.html" class="nav-item active">
+                    <span class="nav-icon">📋</span>
+                    <span>Журнал логов</span>
+                </a>
+                
+                <div class="nav-divider">Управление системой</div>
+                
+                <a href="/mol-catalog.html" class="nav-item">
+                    <span class="nav-icon">📦</span>
+                    <span>Каталог ТМЦ</span>
+                </a>
+                
+                <a href="/mol-requests.html" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    <span>Заявки на ТМЦ</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-details">
+                        <div class="user-name"></div>
+                        <div class="user-role"></div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
+            </div>
+        </aside>
+        
+        <!-- Основной контент -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>📋 Журнал аудита системы</h1>
+                <p>Просмотр всех действий пользователей и системных событий</p>
+            </header>
+            
+            <div class="content-section">
+                <!-- Панель фильтров -->
+                <div class="toolbar" style="flex-wrap: wrap; gap: 10px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-size: 12px; margin-bottom: 5px;">Дата с:</label>
+                            <input type="date" id="startDate" style="padding: 8px;">
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-size: 12px; margin-bottom: 5px;">Дата по:</label>
+                            <input type="date" id="endDate" style="padding: 8px;">
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-size: 12px; margin-bottom: 5px;">Тип действия:</label>
+                            <select id="actionFilter" style="padding: 8px;">
+                                <option value="">Все действия</option>
+                                <option value="CREATE">Создание</option>
+                                <option value="UPDATE">Изменение</option>
+                                <option value="DELETE">Удаление</option>
+                                <option value="LOGIN">Вход</option>
+                                <option value="LOGOUT">Выход</option>
+                                <option value="APPROVE">Одобрение</option>
+                                <option value="REJECT">Отклонение</option>
+                                <option value="ISSUE">Выдача</option>
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-size: 12px; margin-bottom: 5px;">Пользователь:</label>
+                            <select id="userFilter" style="padding: 8px;">
+                                <option value="">Все пользователи</option>
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column;">
+                            <label style="font-size: 12px; margin-bottom: 5px;">Объект:</label>
+                            <select id="entityFilter" style="padding: 8px;">
+                                <option value="">Все объекты</option>
+                                <option value="User">Пользователи</option>
+                                <option value="Material">Материалы</option>
+                                <option value="Request">Заявки</option>
+                                <option value="Department">Подразделения</option>
+                                <option value="Category">Категории</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; align-items: flex-end;">
+                        <button class="btn btn-primary" onclick="applyFilters()">🔍 Применить</button>
+                        <button class="btn btn-secondary" onclick="resetFilters()">🔄 Сбросить</button>
+                    </div>
+                </div>
+                
+                <!-- Кнопки экспорта -->
+                <div style="margin: 20px 0; display: flex; gap: 10px;">
+                    <button class="btn btn-danger" onclick="exportToPDF()">
+                        📄 Экспорт в PDF
+                    </button>
+                    <button class="btn btn-success" onclick="exportToExcel()">
+                        📊 Экспорт в Excel
+                    </button>
+                    <div style="flex: 1;"></div>
+                    <button class="btn btn-info btn-sm" onclick="loadLogs()">🔄 Обновить</button>
+                </div>
+                
+                <!-- Таблица логов -->
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th style="width: 150px;">Дата и время</th>
+                                <th style="width: 120px;">Пользователь</th>
+                                <th style="width: 150px;">Действие</th>
+                                <th style="width: 100px;">Объект</th>
+                                <th style="width: 80px;">ID объекта</th>
+                                <th>Описание</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTable">
+                            <tr>
+                                <td colspan="7" class="text-center">Загрузка...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div style="margin-top: 10px; color: #666; font-size: 14px;">
+                    Всего записей: <span id="totalCount">0</span>
+                    <span style="margin-left: 20px;">Отфильтровано: <span id="filteredCount">0</span></span>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/js/common.js"></script>
+    <script>
+        let allLogs = [];
+        let filteredLogs = [];
+        let users = [];
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadUsers();
+            await loadLogs();
+            initializeDateFilters();
+        });
+        
+        function initializeDateFilters() {
+            // Установить даты по умолчанию (последние 7 дней)
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(startDate.getDate() - 7);
+            
+            document.getElementById('endDate').valueAsDate = endDate;
+            document.getElementById('startDate').valueAsDate = startDate;
+        }
+        
+        async function loadUsers() {
+            try {
+                users = await apiRequest('/users');
+                const select = document.getElementById('userFilter');
+                select.innerHTML = '<option value="">Все пользователи</option>';
+                users.forEach(user => {
+                    select.innerHTML += `<option value="${user.username}">${user.firstName} ${user.lastName} (${user.username})</option>`;
+                });
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+        
+        async function loadLogs() {
+            try {
+                allLogs = await apiRequest('/audit-logs');
+                filteredLogs = allLogs;
+                displayLogs(filteredLogs);
+                document.getElementById('totalCount').textContent = allLogs.length;
+                document.getElementById('filteredCount').textContent = filteredLogs.length;
+            } catch (error) {
+                console.error('Error loading logs:', error);
+                document.getElementById('logsTable').innerHTML = 
+                    '<tr><td colspan="7" class="text-center">Ошибка загрузки данных</td></tr>';
+            }
+        }
+        
+        function displayLogs(logs) {
+            const tbody = document.getElementById('logsTable');
+            
+            if (logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">Нет записей</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = logs.map(log => `
+                <tr>
+                    <td>${log.id}</td>
+                    <td>${formatDateTime(log.timestamp)}</td>
+                    <td>${log.username || 'Система'}</td>
+                    <td>${getActionBadge(log.action)}</td>
+                    <td>${log.entityType || '-'}</td>
+                    <td>${log.entityId || '-'}</td>
+                    <td title="${log.description || '-'}">${truncate(log.description, 60)}</td>
+                </tr>
+            `).join('');
+        }
+        
+        function getActionBadge(action) {
+            const colors = {
+                'CREATE': '#4CAF50',
+                'UPDATE': '#2196F3',
+                'DELETE': '#f44336',
+                'LOGIN': '#9C27B0',
+                'LOGOUT': '#757575',
+                'APPROVE': '#00BCD4',
+                'REJECT': '#FF5722',
+                'ISSUE': '#4CAF50'
+            };
+            
+            let color = '#999';
+            let text = action;
+            
+            for (let key in colors) {
+                if (action && action.includes(key)) {
+                    color = colors[key];
+                    text = key;
+                    break;
+                }
+            }
+            
+            return `<span style="background: ${color}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">${text}</span>`;
+        }
+        
+        function formatDateTime(timestamp) {
+            if (!timestamp) return '-';
+            const date = new Date(timestamp);
+            return date.toLocaleString('ru-RU', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+        
+        function truncate(text, maxLength) {
+            if (!text) return '-';
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        }
+        
+        function applyFilters() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const action = document.getElementById('actionFilter').value;
+            const user = document.getElementById('userFilter').value;
+            const entity = document.getElementById('entityFilter').value;
+            
+            filteredLogs = allLogs;
+            
+            // Фильтр по датам
+            if (startDate) {
+                const startDateTime = new Date(startDate);
+                startDateTime.setHours(0, 0, 0, 0);
+                filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) >= startDateTime);
+            }
+            
+            if (endDate) {
+                const endDateTime = new Date(endDate);
+                endDateTime.setHours(23, 59, 59, 999);
+                filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) <= endDateTime);
+            }
+            
+            // Фильтр по типу действия
+            if (action) {
+                filteredLogs = filteredLogs.filter(log => log.action && log.action.includes(action));
+            }
+            
+            // Фильтр по пользователю
+            if (user) {
+                filteredLogs = filteredLogs.filter(log => log.username === user);
+            }
+            
+            // Фильтр по объекту
+            if (entity) {
+                filteredLogs = filteredLogs.filter(log => log.entityType === entity);
+            }
+            
+            displayLogs(filteredLogs);
+            document.getElementById('filteredCount').textContent = filteredLogs.length;
+        }
+        
+        function resetFilters() {
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('actionFilter').value = '';
+            document.getElementById('userFilter').value = '';
+            document.getElementById('entityFilter').value = '';
+            
+            initializeDateFilters();
+            filteredLogs = allLogs;
+            displayLogs(filteredLogs);
+            document.getElementById('filteredCount').textContent = filteredLogs.length;
+        }
+        
+        async function exportToPDF() {
+            if (filteredLogs.length === 0) {
+                alert('Нет данных для экспорта');
+                return;
+            }
+            
+            try {
+                const startDate = document.getElementById('startDate').value || '';
+                const endDate = document.getElementById('endDate').value || '';
+                
+                const url = `/audit-logs/export/pdf?startDate=${startDate}&endDate=${endDate}`;
+                window.open(url, '_blank');
+            } catch (error) {
+                alert('Ошибка при экспорте в PDF: ' + error.message);
+            }
+        }
+        
+        async function exportToExcel() {
+            if (filteredLogs.length === 0) {
+                alert('Нет данных для экспорта');
+                return;
+            }
+            
+            try {
+                const startDate = document.getElementById('startDate').value || '';
+                const endDate = document.getElementById('endDate').value || '';
+                
+                const url = `/audit-logs/export/excel?startDate=${startDate}&endDate=${endDate}`;
+                window.open(url, '_blank');
+            } catch (error) {
+                alert('Ошибка при экспорте в Excel: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
