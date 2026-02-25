@@ -528,6 +528,6 @@ sudo systemctl start inventory-system
 ## Поддержка
 
 Контакты технической поддержки:
-- Email: support@company.com
-- Телефон: +7 (XXX) XXX-XX-XX
-- Wiki: https://wiki.company.com/inventory-system
+- Email: s.mironov@tmk-group.com
+- Телефон: +7 (950) 558-48-90
+
