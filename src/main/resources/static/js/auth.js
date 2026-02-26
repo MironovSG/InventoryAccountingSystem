@@ -38,14 +38,12 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         }));
         
         // Перенаправление на соответствующую панель управления в зависимости от роли
-        if (data.role === 'ADMIN') {
-            window.location.href = '/admin-dashboard.html';
-        } else if (data.role === 'MOL') {
+        if (data.role === 'MOL') {
             window.location.href = '/mol-dashboard.html';
-        } else if (data.role === 'MANAGER') {
-            window.location.href = '/manager-dashboard.html';
+        } else if (data.role === 'ADMIN') {
+            window.location.href = '/dashboard.html';
         } else {
-            // Для всех остальных ролей (ENGINEER, SPECIALIST_*)
+            // Для всех остальных ролей (ENGINEER, SPECIALIST_*, MANAGER)
             window.location.href = '/user-dashboard.html';
         }
     } catch (error) {
