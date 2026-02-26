@@ -639,27 +639,3 @@ body {
         max-width: 100%;
     }
 }
-
-/* Дополнительные стили для управления пользователями */
-.nav-divider {
-    padding: 10px 15px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #999;
-    letter-spacing: 1px;
-    margin-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
-
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-}

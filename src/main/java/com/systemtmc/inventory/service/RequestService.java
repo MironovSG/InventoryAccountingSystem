@@ -143,8 +143,6 @@ public class RequestService {
         request.setStatus(newStatus);
         
         switch (newStatus) {
-            case ACCEPTED:
-                break;
             case IN_PROGRESS:
                 break;
             case AWAITING_ISSUANCE:

@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginResponse {
     private String token;
-    @Builder.Default
     private String type = "Bearer";
     private Long userId;
     private String username;

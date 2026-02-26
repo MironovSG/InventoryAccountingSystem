@@ -3,7 +3,6 @@ package com.systemtmc.inventory.service;
 import com.systemtmc.inventory.dto.MaterialDTO;
 import com.systemtmc.inventory.model.entity.Material;
 import com.systemtmc.inventory.model.entity.MaterialCategory;
-import com.systemtmc.inventory.model.enums.WarehouseType;
 import com.systemtmc.inventory.repository.MaterialCategoryRepository;
 import com.systemtmc.inventory.repository.MaterialRepository;
 import lombok.RequiredArgsConstructor;
@@ -121,7 +120,7 @@ public class MaterialService {
         material.setBarcode(materialDTO.getBarcode());
         material.setImageUrl(materialDTO.getImageUrl());
         material.setActive(materialDTO.getActive() != null ? materialDTO.getActive() : true);
-        material.setWarehouseType(String.valueOf(materialDTO.getWarehouseType()));
+        material.setWarehouseType(materialDTO.getWarehouseType());
         
         MaterialCategory category = categoryRepository.findById(materialDTO.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Категория не найдена"));
@@ -162,7 +161,7 @@ public class MaterialService {
         material.setBarcode(materialDTO.getBarcode());
         material.setImageUrl(materialDTO.getImageUrl());
         material.setActive(materialDTO.getActive());
-        material.setWarehouseType(String.valueOf(materialDTO.getWarehouseType()));
+        material.setWarehouseType(materialDTO.getWarehouseType());
         
         if (!material.getCategory().getId().equals(materialDTO.getCategoryId())) {
             MaterialCategory category = categoryRepository.findById(materialDTO.getCategoryId())
@@ -230,7 +229,7 @@ public class MaterialService {
                 .imageUrl(material.getImageUrl())
                 .active(material.getActive())
                 .stockLevel(material.calculateStockLevel())
-                .warehouseType(WarehouseType.valueOf(material.getWarehouseType()))
+                .warehouseType(material.getWarehouseType())
                 .createdAt(material.getCreatedAt())
                 .updatedAt(material.getUpdatedAt())
                 .build();
