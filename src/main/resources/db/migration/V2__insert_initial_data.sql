@@ -20,22 +20,22 @@ INSERT INTO material_categories (code, name, description, active, created_at, de
 -- ВАЖНО: Для генерации правильных хешей запустите класс PasswordGenerator или используйте онлайн генератор BCrypt
 -- Временные хеши (замените на правильные после генерации):
 INSERT INTO users (username, password, email, last_name, first_name, role, active, created_at, deleted) VALUES
-('admin', '$2a$10$ENXoQp42k3j3UbaGLcPWVOHEMBi9MU0Od.IsQq9ltMaJ4/pYyTmCe', 'admin@company.com', 'Администратор', 'Системный', 'ADMIN', true, CURRENT_TIMESTAMP, false);
+('admin', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin@company.com', 'Администратор', 'Системный', 'ADMIN', true, CURRENT_TIMESTAMP, false);
 
 -- Создание пользователя МОЛ
 -- Пароль: mol123
 INSERT INTO users (username, password, email, last_name, first_name, role, department_id, active, created_at, deleted) VALUES
-('mol_user', '$2a$10$2dzfpfhOfX18kot49UOQa.jMKYYsw2NnIdGEcaRPn4OoLqnLq1.ka', 'mol@company.com', 'Кладовщик', 'Иван', 'MOL', 4, true, CURRENT_TIMESTAMP, false);
+('mol_user', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'mol@company.com', 'Кладовщик', 'Иван', 'MOL', 4, true, CURRENT_TIMESTAMP, false);
 
 -- Создание пользователя инженера
 -- Пароль: engineer123
 INSERT INTO users (username, password, email, last_name, first_name, role, department_id, active, created_at, deleted) VALUES
-('engineer_user', '$2a$10$UiJrx4B8AHeNhpAdlqU5geQ64aKlfSmGSaIZbMk2n6dX3aNtZNmSW', 'engineer@company.com', 'Петров', 'Петр', 'ENGINEER', 3, true, CURRENT_TIMESTAMP, false);
+('engineer_user', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'engineer@company.com', 'Петров', 'Петр', 'ENGINEER', 3, true, CURRENT_TIMESTAMP, false);
 
 -- Создание пользователя руководителя
 -- Пароль: manager123
 INSERT INTO users (username, password, email, last_name, first_name, role, department_id, active, created_at, deleted) VALUES
-('manager_user', '$2a$10$K7mLt28p9vcT8wpAvtYM8.F309S7Qy1jqkrzzx0YQBvDQlyvEFEiG', 'manager@company.com', 'Сидоров', 'Сергей', 'MANAGER', 3, true, CURRENT_TIMESTAMP, false);
+('manager_user', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'manager@company.com', 'Сидоров', 'Сергей', 'MANAGER', 3, true, CURRENT_TIMESTAMP, false);
 
 -- Создание примеров материалов
 -- category_id: 1=ELEC, 2=TOOLS, 3=SPARE, 4=CONSUMABLES, 5=OFFICE
