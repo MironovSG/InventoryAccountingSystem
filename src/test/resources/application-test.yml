@@ -16,10 +16,7 @@ spring:
     init:
       mode: never
 
-server:
-  servlet:
-    context-path: /api
-
+# В тестах context-path не задаём — MockMvc обращается к корню
 app:
   jwt:
     secret: testJwtSecretKeyForTokenGenerationMinLength64CharactersRequiredForHS256Encoding!!

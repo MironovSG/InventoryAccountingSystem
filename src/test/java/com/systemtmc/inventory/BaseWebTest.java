@@ -13,10 +13,9 @@ import org.springframework.test.web.servlet.MockMvc;
 @ActiveProfiles("test")
 public abstract class BaseWebTest {
 
-    protected static final String CONTEXT_PATH = "/api";
-
+    /** В тестах MockMvc обращается к сервлету без context-path, используем путь без /api */
     protected String url(String path) {
-        if (path.startsWith("/")) path = path.substring(1);
-        return CONTEXT_PATH + "/" + path;
+        if (path.startsWith("/")) return path;
+        return "/" + path;
     }
 }
