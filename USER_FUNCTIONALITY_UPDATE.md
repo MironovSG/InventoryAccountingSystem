@@ -131,7 +131,7 @@
 
 **Новый метод:**
 ```java
-sendNewRequestNotificationToMOL(Request request)
+sendNewRequestNotificationToMOL(Request request);
 ```
 
 **Функция:**
@@ -144,7 +144,7 @@ sendNewRequestNotificationToMOL(Request request)
 
 **Изменения:**
 - При создании заявки автоматически вызывается `pushNotificationService.sendNewRequestNotificationToMOL()`
-- МОЛ мгновенно получает уведомление о новой заявке
+- , МОЛ, мгновенно получает уведомление о новой заявке
 
 ### 3. ✅ Маршрутизация по ролям
 **Файл:** `src/main/resources/static/js/auth.js`

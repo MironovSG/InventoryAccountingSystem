@@ -94,16 +94,16 @@
 
 #### WarehouseType (enum)
 ```java
-CONSUMABLES("Склад расходных материалов")
-SPARE_PARTS("Склад запасных частей")
-COMPONENTS("Склад комплектующих")
+CONSUMABLES("Склад расходных материалов");
+SPARE_PARTS("Склад запасных частей");
+COMPONENTS("Склад комплектующих");
 ```
 
 #### WorkGroup (enum)
 ```java
-ARM("АРМ")
-GOTO("ГОТО")
-GOKS("ГОКС")
+ARM("АРМ");
+GOTO("ГОТО");
+GOKS("ГОКС");
 ```
 
 #### Notification (entity)

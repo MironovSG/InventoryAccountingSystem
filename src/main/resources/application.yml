@@ -29,6 +29,18 @@ spring:
       hibernate:
         format_sql: true
 
+  mail:
+    host: smtp.example.com
+    port: 587
+    username: your-email@example.com
+    password: your-email-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 server:
   port: 8080
   servlet:
@@ -44,3 +56,4 @@ logging:
     root: INFO
     com.systemtmc: DEBUG
     org.springframework.security: INFO
+
