@@ -16,24 +16,19 @@ INSERT INTO material_categories (code, name, description, active, created_at, de
 ('OFFICE', 'Офис', 'Офисные принадлежности', true, CURRENT_TIMESTAMP, false);
 
 -- Создание пользователя администратора
--- Пароль: admin123 (зашифрован с помощью BCrypt)
--- ВАЖНО: Для генерации правильных хешей запустите класс PasswordGenerator или используйте онлайн генератор BCrypt
--- Временные хеши (замените на правильные после генерации):
+-- Пароль по умолчанию: admin123 (при первом запуске приложения DefaultPasswordInitializer установит правильный BCrypt-хеш)
 INSERT INTO users (username, password, email, last_name, first_name, role, active, created_at, deleted) VALUES
 ('admin', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin@company.com', 'Администратор', 'Системный', 'ADMIN', true, CURRENT_TIMESTAMP, false);
 
--- Создание пользователя МОЛ
--- Пароль: mol123
+-- Создание пользователя МОЛ (пароль: mol123 — устанавливается при первом запуске)
 INSERT INTO users (username, password, email, last_name, first_name, role, department_id, active, created_at, deleted) VALUES
 ('mol_user', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'mol@company.com', 'Кладовщик', 'Иван', 'MOL', 4, true, CURRENT_TIMESTAMP, false);
 
--- Создание пользователя инженера
--- Пароль: engineer123
+-- Создание пользователя инженера (пароль: engineer123 — при первом запуске)
 INSERT INTO users (username, password, email, last_name, first_name, role, department_id, active, created_at, deleted) VALUES
 ('engineer_user', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'engineer@company.com', 'Петров', 'Петр', 'ENGINEER', 3, true, CURRENT_TIMESTAMP, false);
 
--- Создание пользователя руководителя
--- Пароль: manager123
+-- Создание пользователя руководителя (пароль: manager123 — при первом запуске)
 INSERT INTO users (username, password, email, last_name, first_name, role, department_id, active, created_at, deleted) VALUES
 ('manager_user', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'manager@company.com', 'Сидоров', 'Сергей', 'MANAGER', 3, true, CURRENT_TIMESTAMP, false);
 

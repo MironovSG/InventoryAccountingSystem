@@ -49,8 +49,8 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/api-docs/**").permitAll()
                 // Actuator для мониторинга
                 .requestMatchers("/management/**").hasRole("ADMIN")
-                // Статические ресурсы
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/favicon.ico").permitAll()
+                // Статические ресурсы и страницы входа
+                .requestMatchers("/", "/index.html", "/*.html", "/css/**", "/js/**", "/images/**", "/webjars/**", "/favicon.ico").permitAll()
                 // Все остальные требуют аутентификации
                 .anyRequest().authenticated()
             )
