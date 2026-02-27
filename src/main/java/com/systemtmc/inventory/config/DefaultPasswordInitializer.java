@@ -1,8 +1,6 @@
 package com.systemtmc.inventory.config;
 
-import com.systemtmc.inventory.model.entity.User;
 import com.systemtmc.inventory.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -20,7 +18,6 @@ import java.util.Map;
  */
 @Component
 @Order(100)
-@RequiredArgsConstructor
 @Slf4j
 public class DefaultPasswordInitializer implements ApplicationRunner {
 
@@ -29,6 +26,11 @@ public class DefaultPasswordInitializer implements ApplicationRunner {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public DefaultPasswordInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     private static final Map<String, String> DEFAULT_PASSWORDS = Map.of(
             "admin", "admin123",
