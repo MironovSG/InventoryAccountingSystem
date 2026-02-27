@@ -1,9 +1,20 @@
 package com.systemtmc.inventory.service;
 
 import com.systemtmc.inventory.dto.MaterialMovementDTO;
-import com.systemtmc.inventory.model.entity.*;
+import com.systemtmc.inventory.model.entity.MaterialMovement;
+import com.systemtmc.inventory.model.entity.MaterialCategory;
+import com.systemtmc.inventory.model.entity.Department;
+import com.systemtmc.inventory.model.entity.Material;
+import com.systemtmc.inventory.model.entity.Request;
+import com.systemtmc.inventory.model.entity.AuditLog;
+import com.systemtmc.inventory.model.entity.User;
 import com.systemtmc.inventory.model.enums.MovementType;
-import com.systemtmc.inventory.repository.*;
+import com.systemtmc.inventory.repository.MaterialMovementRepository;
+import com.systemtmc.inventory.repository.MaterialCategoryRepository;
+import com.systemtmc.inventory.repository.MaterialRepository;
+import com.systemtmc.inventory.repository.UserRepository;
+import com.systemtmc.inventory.repository.DepartmentRepository;
+import com.systemtmc.inventory.repository.RequestRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

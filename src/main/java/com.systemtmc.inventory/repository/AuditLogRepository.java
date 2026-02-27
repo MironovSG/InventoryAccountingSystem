@@ -1,6 +1,7 @@
 package com.systemtmc.inventory.repository;
 
 import com.systemtmc.inventory.model.entity.AuditLog;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -43,4 +44,14 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
         @Param("startDate") LocalDateTime startDate,
         @Param("endDate") LocalDateTime endDate
     );
+
+    List<AuditLog> findAllByOrderByCreatedAtDesc(PageRequest of);
+
+    List<AuditLog> findByCreatedAtBetweenOrderByCreatedAtDesc(LocalDateTime start, LocalDateTime end);
+
+    List<AuditLog> findByUsernameOrderByCreatedAtDesc(String username);
+
+    List<AuditLog> findByActionContainingOrderByCreatedAtDesc(String action);
+
+    List<AuditLog> findByEntityTypeOrderByCreatedAtDesc(String entityType);
 }
