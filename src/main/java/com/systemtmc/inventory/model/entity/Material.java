@@ -47,6 +47,7 @@ public class Material extends BaseEntity {
     @NotNull(message = "Текущий остаток обязателен")
     @Min(value = 0, message = "Текущий остаток не может быть отрицательным")
     @Column(name = "current_quantity", nullable = false, precision = 15, scale = 3)
+    @Builder.Default
     private BigDecimal currentQuantity = BigDecimal.ZERO;
     
     @Min(value = 0, message = "Минимальный остаток не может быть отрицательным")
@@ -87,6 +88,7 @@ public class Material extends BaseEntity {
     private String imageUrl;
     
     @Column(name = "active", nullable = false)
+    @Builder.Default
     private Boolean active = true;
     
     /**

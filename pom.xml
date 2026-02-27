@@ -15,19 +15,18 @@
     <groupId>com.systemtmc</groupId>
     <artifactId>InventoryAccountingSystem</artifactId>
     <version>1.0.0</version>
-    <version>1.0-SNAPSHOT</version>
     <name>Inventory Management System</name>
     <description>Система учета и выдачи товарно-материальных ценностей</description>
 
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.34</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <apache.poi.version>5.2.5</apache.poi.version>
         <itext.version>7.2.5</itext.version>
-        <maven.compiler.source>1.11</maven.compiler.source>
-        <maven.compiler.target>1.11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <dl4j.version>0.9.1</dl4j.version>
     </properties>
 
@@ -61,6 +60,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
         <!-- PostgreSQL Driver -->
@@ -194,6 +198,13 @@
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-play_2.11</artifactId>
             <version>0.9.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.crac</groupId>
+            <artifactId>crac</artifactId>
+            <version>1.4.0</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
