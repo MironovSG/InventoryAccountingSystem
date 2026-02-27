@@ -1,9 +1,7 @@
 package com.systemtmc.inventory.config;
 
 import com.systemtmc.inventory.repository.UserRepository;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.annotation.Order;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,8 +12,7 @@ import java.util.Map;
  * При первом запуске обновляет пароли тестовых пользователей (admin123, mol123 и т.д.).
  */
 @Component
-@Order(100)
-public class DefaultPasswordInitializer implements ApplicationRunner {
+public class DefaultPasswordInitializer implements InitializingBean {
 
     private static final String LEGACY_PLACEHOLDER_HASH = "$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi";
 
@@ -36,7 +33,7 @@ public class DefaultPasswordInitializer implements ApplicationRunner {
 
     @Override
     @Transactional
-    public void run(ApplicationArguments args) {
+    public void afterPropertiesSet() {
         for (Map.Entry<String, String> entry : DEFAULT_PASSWORDS.entrySet()) {
             String username = entry.getKey();
             String plainPassword = entry.getValue();
