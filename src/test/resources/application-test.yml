@@ -6,10 +6,11 @@ spring:
     password:
     driver-class-name: org.h2.Driver
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    # dialect не задаём — Hibernate сам выберет H2 (убирает предупреждение HHH90000025)
     hibernate:
       ddl-auto: create-drop
     show-sql: false
+    open-in-view: false
   flyway:
     enabled: false
   sql:
@@ -26,3 +27,6 @@ logging:
   level:
     root: WARN
     com.systemtmc: INFO
+    org.springframework.test: WARN
+    org.springframework.boot: WARN
+    org.hibernate: WARN
