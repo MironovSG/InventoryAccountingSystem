@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/api/">
     <title>Мои заявки - Система учета ТМЦ</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="app-container">
@@ -15,23 +16,23 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="/user-dashboard.html" class="nav-item">
+                <a href="user-dashboard.html" class="nav-item">
                     <span class="nav-icon">🏠</span>
                     <span>Главная</span>
                 </a>
-                <a href="/user-catalog.html" class="nav-item">
+                <a href="user-catalog.html" class="nav-item">
                     <span class="nav-icon">📦</span>
                     <span>Каталог ТМЦ</span>
                 </a>
-                <a href="#" onclick="window.location.href='/user-dashboard.html'; return false;" class="nav-item">
+                <a href="#" onclick="window.location.href='user-dashboard.html'; return false;" class="nav-item">
                     <span class="nav-icon">➕</span>
                     <span>Создать заявку</span>
                 </a>
-                <a href="/user-my-requests.html" class="nav-item active">
+                <a href="user-my-requests.html" class="nav-item active">
                     <span class="nav-icon">📝</span>
                     <span>Мои заявки</span>
                 </a>
-                <a href="/user-history.html" class="nav-item">
+                <a href="user-history.html" class="nav-item">
                     <span class="nav-icon">📜</span>
                     <span>История заявок</span>
                 </a>
@@ -147,7 +148,7 @@
         </div>
     </div>
     
-    <script src="/js/common.js"></script>
+    <script src="js/common.js"></script>
     <script>
         let allMyRequests = [];
         

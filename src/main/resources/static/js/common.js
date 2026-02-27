@@ -17,7 +17,7 @@ function getCurrentUser() {
 function checkAuth() {
     const token = getToken();
     if (!token) {
-        window.location.href = '/index.html';
+        window.location.href = 'index.html';
         return false;
     }
     return true;
@@ -27,7 +27,7 @@ function checkAuth() {
 function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.href = '/index.html';
+    window.location.href = 'index.html';
 }
 
 // Выполнение API запроса
@@ -203,9 +203,9 @@ window.addEventListener('click', function(event) {
     }
 });
 
-// Проверка авторизации при загрузке страницы
-if (window.location.pathname !== '/index.html' && window.location.pathname !== '/') {
-    if (checkAuth()) {
-        initUserInfo();
-    }
+// Проверка авторизации при загрузке страницы (страница входа — index.html без пути или с /api/ или /api/index.html)
+const path = window.location.pathname || '';
+const isLoginPage = path === '/' || path === '/api' || path === '/api/' || path.endsWith('/index.html');
+if (!isLoginPage && checkAuth()) {
+    initUserInfo();
 }

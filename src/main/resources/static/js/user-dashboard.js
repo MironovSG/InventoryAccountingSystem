@@ -38,7 +38,7 @@ async function loadRecentRequests() {
         }
         
         tbody.innerHTML = recent.map(request => `
-            <tr onclick="window.location.href='/user-my-requests.html?id=${request.id}';" style="cursor: pointer;">
+            <tr onclick="window.location.href='user-my-requests.html?id=${request.id}';" style="cursor: pointer;">
                 <td>${request.requestNumber}</td>
                 <td>${formatDateOnly(request.createdAt)}</td>
                 <td>${getRequestStatusBadge(request.status)}</td>

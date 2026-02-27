@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/api/">
     <title>Панель администратора - Система учета ТМЦ</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="app-container">
@@ -16,49 +17,49 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="/admin-dashboard.html" class="nav-item active">
+                <a href="admin-dashboard.html" class="nav-item active">
                     <span class="nav-icon">🏠</span>
                     <span>Панель мониторинга</span>
                 </a>
                 
-                <a href="/manager-users.html" class="nav-item">
+                <a href="manager-users.html" class="nav-item">
                     <span class="nav-icon">👥</span>
                     <span>Управление пользователями</span>
                 </a>
                 
-                <a href="/admin-database.html" class="nav-item">
+                <a href="admin-database.html" class="nav-item">
                     <span class="nav-icon">🗄️</span>
                     <span>Управление БД</span>
                 </a>
                 
-                <a href="/admin-logs.html" class="nav-item">
+                <a href="admin-logs.html" class="nav-item">
                     <span class="nav-icon">📋</span>
                     <span>Журнал логов</span>
                 </a>
                 
                 <div class="nav-divider">Управление системой</div>
                 
-                <a href="/mol-catalog.html" class="nav-item">
+                <a href="mol-catalog.html" class="nav-item">
                     <span class="nav-icon">📦</span>
                     <span>Каталог ТМЦ</span>
                 </a>
                 
-                <a href="/mol-requests.html" class="nav-item">
+                <a href="mol-requests.html" class="nav-item">
                     <span class="nav-icon">📝</span>
                     <span>Заявки на ТМЦ</span>
                 </a>
                 
-                <a href="/mol-history.html" class="nav-item">
+                <a href="mol-history.html" class="nav-item">
                     <span class="nav-icon">📜</span>
                     <span>История заявок</span>
                 </a>
                 
-                <a href="/departments.html" class="nav-item">
+                <a href="departments.html" class="nav-item">
                     <span class="nav-icon">🏢</span>
                     <span>Подразделения</span>
                 </a>
                 
-                <a href="/categories.html" class="nav-item">
+                <a href="categories.html" class="nav-item">
                     <span class="nav-icon">🏷️</span>
                     <span>Категории материалов</span>
                 </a>
@@ -140,7 +141,7 @@
                 </div>
                 
                 <div class="stats-grid">
-                    <div class="stat-card" onclick="window.location.href='/manager-users.html'" style="cursor: pointer;">
+                    <div class="stat-card" onclick="window.location.href='manager-users.html'" style="cursor: pointer;">
                         <div class="stat-icon" style="background-color: #667eea;">👥</div>
                         <div class="stat-content">
                             <div class="stat-label">Пользователи</div>
@@ -149,7 +150,7 @@
                         </div>
                     </div>
                     
-                    <div class="stat-card" onclick="window.location.href='/mol-catalog.html'" style="cursor: pointer;">
+                    <div class="stat-card" onclick="window.location.href='mol-catalog.html'" style="cursor: pointer;">
                         <div class="stat-icon" style="background-color: #2196F3;">📦</div>
                         <div class="stat-content">
                             <div class="stat-label">Материалы</div>
@@ -158,7 +159,7 @@
                         </div>
                     </div>
                     
-                    <div class="stat-card" onclick="window.location.href='/mol-requests.html'" style="cursor: pointer;">
+                    <div class="stat-card" onclick="window.location.href='mol-requests.html'" style="cursor: pointer;">
                         <div class="stat-icon" style="background-color: #4CAF50;">📝</div>
                         <div class="stat-content">
                             <div class="stat-label">Заявки</div>
@@ -167,7 +168,7 @@
                         </div>
                     </div>
                     
-                    <div class="stat-card" onclick="window.location.href='/admin-logs.html'" style="cursor: pointer;">
+                    <div class="stat-card" onclick="window.location.href='admin-logs.html'" style="cursor: pointer;">
                         <div class="stat-icon" style="background-color: #FF9800;">📋</div>
                         <div class="stat-content">
                             <div class="stat-label">Записи в логах</div>
@@ -201,7 +202,7 @@
                 </div>
                 
                 <div class="stats-grid">
-                    <div class="stat-card" onclick="window.location.href='/manager-users.html'" style="cursor: pointer; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                    <div class="stat-card" onclick="window.location.href='manager-users.html'" style="cursor: pointer; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                         <div class="stat-icon" style="background-color: rgba(255,255,255,0.2); font-size: 36px;">👥</div>
                         <div class="stat-content">
                             <div class="stat-label" style="color: white;">Управление пользователями</div>
@@ -209,7 +210,7 @@
                         </div>
                     </div>
                     
-                    <div class="stat-card" onclick="window.location.href='/admin-database.html'" style="cursor: pointer; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                    <div class="stat-card" onclick="window.location.href='admin-database.html'" style="cursor: pointer; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
                         <div class="stat-icon" style="background-color: rgba(255,255,255,0.2); font-size: 36px;">🗄️</div>
                         <div class="stat-content">
                             <div class="stat-label" style="color: white;">Управление базой данных</div>
@@ -217,7 +218,7 @@
                         </div>
                     </div>
                     
-                    <div class="stat-card" onclick="window.location.href='/admin-logs.html'" style="cursor: pointer; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                    <div class="stat-card" onclick="window.location.href='admin-logs.html'" style="cursor: pointer; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
                         <div class="stat-icon" style="background-color: rgba(255,255,255,0.2); font-size: 36px;">📋</div>
                         <div class="stat-content">
                             <div class="stat-label" style="color: white;">Журнал аудита</div>
@@ -231,7 +232,7 @@
             <div class="content-section">
                 <div class="section-header">
                     <h2>🕐 Последние действия в системе</h2>
-                    <a href="/admin-logs.html" class="btn btn-primary btn-sm">Все логи</a>
+                    <a href="admin-logs.html" class="btn btn-primary btn-sm">Все логи</a>
                 </div>
                 <div class="table-container">
                     <table class="data-table">
@@ -255,7 +256,7 @@
         </main>
     </div>
     
-    <script src="/js/common.js"></script>
+    <script src="js/common.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
             await loadDashboardData();
@@ -278,7 +279,7 @@
             try {
                 // Статус системы (через Actuator health endpoint)
                 try {
-                    const health = await fetch('/management/health').then(r => r.json());
+                    const health = await fetch('management/health').then(r => r.json());
                     document.getElementById('systemStatus').textContent = health.status === 'UP' ? 'Работает' : 'Проблемы';
                     document.getElementById('systemStatus').style.color = health.status === 'UP' ? '#4CAF50' : '#f44336';
                 } catch (e) {

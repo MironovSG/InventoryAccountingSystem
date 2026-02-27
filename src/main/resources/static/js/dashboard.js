@@ -84,7 +84,7 @@ async function loadRecentRequests() {
         }
         
         tbody.innerHTML = recentRequests.map(request => `
-            <tr onclick="window.location.href='/requests.html?id=${request.id}';" style="cursor: pointer;">
+            <tr onclick="window.location.href='requests.html?id=${request.id}';" style="cursor: pointer;">
                 <td>${request.requestNumber}</td>
                 <td>${request.requesterName}</td>
                 <td>${request.departmentName}</td>
@@ -112,7 +112,7 @@ async function loadLowStockMaterials() {
         }
         
         tbody.innerHTML = materials.map(material => `
-            <tr onclick="window.location.href='/materials.html?id=${material.id}';" style="cursor: pointer;">
+            <tr onclick="window.location.href='materials.html?id=${material.id}';" style="cursor: pointer;">
                 <td>${material.article}</td>
                 <td>${material.name}</td>
                 <td>${formatNumber(material.currentQuantity, 0)}</td>

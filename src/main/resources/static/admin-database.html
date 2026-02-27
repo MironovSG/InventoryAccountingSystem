@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/api/">
     <title>Управление БД - Система учета ТМЦ</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="app-container">
@@ -16,22 +17,22 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="/admin-dashboard.html" class="nav-item">
+                <a href="admin-dashboard.html" class="nav-item">
                     <span class="nav-icon">🏠</span>
                     <span>Панель мониторинга</span>
                 </a>
                 
-                <a href="/manager-users.html" class="nav-item">
+                <a href="manager-users.html" class="nav-item">
                     <span class="nav-icon">👥</span>
                     <span>Управление пользователями</span>
                 </a>
                 
-                <a href="/admin-database.html" class="nav-item active">
+                <a href="admin-database.html" class="nav-item active">
                     <span class="nav-icon">🗄️</span>
                     <span>Управление БД</span>
                 </a>
                 
-                <a href="/admin-logs.html" class="nav-item">
+                <a href="admin-logs.html" class="nav-item">
                     <span class="nav-icon">📋</span>
                     <span>Журнал логов</span>
                 </a>
@@ -146,7 +147,7 @@
                 
                 <div class="toolbar">
                     <div>
-                        <button class="btn btn-primary btn-sm" onclick="window.location.href='/manager-users.html'" id="editButton">
+                        <button class="btn btn-primary btn-sm" onclick="window.location.href='manager-users.html'" id="editButton">
                             ✏️ Редактировать через интерфейс
                         </button>
                     </div>
@@ -191,7 +192,7 @@
         </main>
     </div>
     
-    <script src="/js/common.js"></script>
+    <script src="js/common.js"></script>
     <script>
         let currentTableData = [];
         let filteredTableData = [];
@@ -236,27 +237,27 @@
                 switch(tableName) {
                     case 'users':
                         endpoint = '/users';
-                        editUrl = '/manager-users.html';
+                        editUrl = 'manager-users.html';
                         break;
                     case 'materials':
                         endpoint = '/materials';
-                        editUrl = '/mol-catalog.html';
+                        editUrl = 'mol-catalog.html';
                         break;
                     case 'requests':
                         endpoint = '/requests';
-                        editUrl = '/mol-requests.html';
+                        editUrl = 'mol-requests.html';
                         break;
                     case 'departments':
                         endpoint = '/departments';
-                        editUrl = '/departments.html';
+                        editUrl = 'departments.html';
                         break;
                     case 'material_categories':
                         endpoint = '/material-categories';
-                        editUrl = '/categories.html';
+                        editUrl = 'categories.html';
                         break;
                     case 'audit_logs':
                         endpoint = '/audit-logs';
-                        editUrl = '/admin-logs.html';
+                        editUrl = 'admin-logs.html';
                         break;
                     default:
                         alert('Таблица не поддерживается для просмотра');

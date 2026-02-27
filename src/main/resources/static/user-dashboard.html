@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/api/">
     <title>Главная - Система учета ТМЦ</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="app-container">
@@ -15,11 +16,11 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="/user-dashboard.html" class="nav-item active">
+                <a href="user-dashboard.html" class="nav-item active">
                     <span class="nav-icon">🏠</span>
                     <span>Главная</span>
                 </a>
-                <a href="/user-catalog.html" class="nav-item">
+                <a href="user-catalog.html" class="nav-item">
                     <span class="nav-icon">📦</span>
                     <span>Каталог ТМЦ</span>
                 </a>
@@ -27,11 +28,11 @@
                     <span class="nav-icon">➕</span>
                     <span>Создать заявку</span>
                 </a>
-                <a href="/user-my-requests.html" class="nav-item">
+                <a href="user-my-requests.html" class="nav-item">
                     <span class="nav-icon">📝</span>
                     <span>Мои заявки</span>
                 </a>
-                <a href="/user-history.html" class="nav-item">
+                <a href="user-history.html" class="nav-item">
                     <span class="nav-icon">📜</span>
                     <span>История заявок</span>
                 </a>
@@ -47,7 +48,7 @@
                 </div>
                 
                 <!-- Уведомления -->
-                <div id="notificationBadge" style="display: none; background: #f44336; color: white; padding: 5px 10px; border-radius: 15px; text-align: center; margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='/user-notifications.html'">
+                <div id="notificationBadge" style="display: none; background: #f44336; color: white; padding: 5px 10px; border-radius: 15px; text-align: center; margin-bottom: 10px; cursor: pointer;" onclick="window.location.href='user-notifications.html'">
                     <span id="notificationCount">0</span> новых уведомлений
                 </div>
                 
@@ -64,7 +65,7 @@
             
             <!-- Быстрый доступ -->
             <div class="stats-grid">
-                <div class="stat-card" onclick="window.location.href='/user-catalog.html'" style="cursor: pointer;">
+                <div class="stat-card" onclick="window.location.href='user-catalog.html'" style="cursor: pointer;">
                     <div class="stat-icon" style="background-color: #2196F3;">📦</div>
                     <div class="stat-content">
                         <div class="stat-label">Каталог ТМЦ</div>
@@ -80,7 +81,7 @@
                     </div>
                 </div>
                 
-                <div class="stat-card" onclick="window.location.href='/user-my-requests.html'" style="cursor: pointer;">
+                <div class="stat-card" onclick="window.location.href='user-my-requests.html'" style="cursor: pointer;">
                     <div class="stat-icon" style="background-color: #FF9800;">📝</div>
                     <div class="stat-content">
                         <div class="stat-label">Мои заявки</div>
@@ -88,7 +89,7 @@
                     </div>
                 </div>
                 
-                <div class="stat-card" onclick="window.location.href='/user-history.html'" style="cursor: pointer;">
+                <div class="stat-card" onclick="window.location.href='user-history.html'" style="cursor: pointer;">
                     <div class="stat-icon" style="background-color: #9C27B0;">📜</div>
                     <div class="stat-content">
                         <div class="stat-label">История заявок</div>
@@ -101,7 +102,7 @@
             <div class="content-section">
                 <div class="section-header">
                     <h2>Последние уведомления</h2>
-                    <a href="/user-notifications.html" class="btn btn-primary btn-sm">Все уведомления</a>
+                    <a href="user-notifications.html" class="btn btn-primary btn-sm">Все уведомления</a>
                 </div>
                 <div id="notificationsList">
                     <p style="text-align: center; color: #999;">Загрузка...</p>
@@ -112,7 +113,7 @@
             <div class="content-section">
                 <div class="section-header">
                     <h2>Мои последние заявки</h2>
-                    <a href="/user-my-requests.html" class="btn btn-primary btn-sm">Все заявки</a>
+                    <a href="user-my-requests.html" class="btn btn-primary btn-sm">Все заявки</a>
                 </div>
                 <div class="table-container">
                     <table class="data-table">
@@ -195,7 +196,7 @@
         </div>
     </div>
     
-    <script src="/js/common.js"></script>
-    <script src="/js/user-dashboard.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/user-dashboard.js"></script>
 </body>
 </html>
