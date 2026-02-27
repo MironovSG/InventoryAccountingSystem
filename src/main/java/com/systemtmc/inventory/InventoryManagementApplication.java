@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Главный класс приложения для системы учета и выдачи ТМЦ
- * 
+ *
  * @author SystemTMC
  * @version 1.0.0
  */
@@ -21,5 +21,4 @@ public class InventoryManagementApplication {
     public static void main(String[] args) {
         SpringApplication.run(InventoryManagementApplication.class, args);
     }
-
 }
