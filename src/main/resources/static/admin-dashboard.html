@@ -8,185 +8,152 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <header class="app-header">
+        <a href="admin-dashboard.html" class="app-logo">
+            <img src="images/logo.png" alt="ТМЦ" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="app-logo-placeholder" style="display: none;">ТМЦ</span>
+        </a>
+        <nav class="header-nav">
+            <a href="admin-dashboard.html" class="active">На главную</a>
+            <a href="manager-users.html">Пользователи</a>
+            <a href="admin-database.html">БД</a>
+            <a href="admin-logs.html">Логи</a>
+            <a href="mol-requests.html">Заявки</a>
+            <a href="mol-catalog.html">Каталог</a>
+        </nav>
+        <div class="header-user">
+            <div class="header-user-icon">А</div>
+            <span id="headerUserName">Администратор</span>
+        </div>
+    </header>
+    
     <div class="app-container">
-        <!-- Боковое меню -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>🔧 Администратор</h2>
-                <p style="font-size: 12px; color: #999;">Полный доступ</p>
-            </div>
-            
-            <nav class="sidebar-nav">
-                <a href="admin-dashboard.html" class="nav-item active">
-                    <span class="nav-icon">🏠</span>
-                    <span>Панель мониторинга</span>
-                </a>
-                
-                <a href="manager-users.html" class="nav-item">
-                    <span class="nav-icon">👥</span>
-                    <span>Управление пользователями</span>
-                </a>
-                
-                <a href="admin-database.html" class="nav-item">
-                    <span class="nav-icon">🗄️</span>
-                    <span>Управление БД</span>
-                </a>
-                
-                <a href="admin-logs.html" class="nav-item">
-                    <span class="nav-icon">📋</span>
-                    <span>Журнал логов</span>
-                </a>
-                
-                <div class="nav-divider">Управление системой</div>
-                
-                <a href="mol-catalog.html" class="nav-item">
-                    <span class="nav-icon">📦</span>
-                    <span>Каталог ТМЦ</span>
-                </a>
-                
-                <a href="mol-requests.html" class="nav-item">
-                    <span class="nav-icon">📝</span>
-                    <span>Заявки на ТМЦ</span>
-                </a>
-                
-                <a href="mol-history.html" class="nav-item">
-                    <span class="nav-icon">📜</span>
-                    <span>История заявок</span>
-                </a>
-                
-                <a href="departments.html" class="nav-item">
-                    <span class="nav-icon">🏢</span>
-                    <span>Подразделения</span>
-                </a>
-                
-                <a href="categories.html" class="nav-item">
-                    <span class="nav-icon">🏷️</span>
-                    <span>Категории материалов</span>
-                </a>
-            </nav>
-            
-            <div class="sidebar-footer">
-                <div class="user-info" id="userInfo">
-                    <div class="user-avatar">👤</div>
-                    <div class="user-details">
-                        <div class="user-name"></div>
-                        <div class="user-role"></div>
+        <div class="app-body">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Администратор</h2>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="admin-dashboard.html" class="nav-item active"><span>Панель мониторинга</span></a>
+                    <a href="manager-users.html" class="nav-item"><span>Управление пользователями</span></a>
+                    <a href="admin-database.html" class="nav-item"><span>Управление БД</span></a>
+                    <a href="admin-logs.html" class="nav-item"><span>Журнал логов</span></a>
+                    <div class="nav-divider">Система</div>
+                    <a href="mol-catalog.html" class="nav-item"><span>Каталог ТМЦ</span></a>
+                    <a href="mol-requests.html" class="nav-item"><span>Заявки на ТМЦ</span></a>
+                    <a href="mol-history.html" class="nav-item"><span>История заявок</span></a>
+                    <a href="departments.html" class="nav-item"><span>Подразделения</span></a>
+                    <a href="categories.html" class="nav-item"><span>Категории материалов</span></a>
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="user-info" id="userInfo">
+                        <div class="user-avatar">А</div>
+                        <div class="user-details">
+                            <div class="user-name"></div>
+                            <div class="user-role"></div>
+                        </div>
                     </div>
+                    <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
                 </div>
-                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
-            </div>
-        </aside>
-        
-        <!-- Основной контент -->
-        <main class="main-content">
-            <header class="page-header">
-                <h1>🔧 Панель мониторинга администратора</h1>
-                <p>Контроль и управление системой учета ТМЦ</p>
-            </header>
+            </aside>
             
-            <!-- Системный статус -->
-            <div class="content-section">
-                <div class="section-header">
-                    <h2>⚡ Состояние системы</h2>
-                    <button class="btn btn-primary btn-sm" onclick="refreshSystemStatus()">🔄 Обновить</button>
+            <main class="main-content">
+                <div class="page-header">
+                    <h1>Панель мониторинга администратора</h1>
+                    <p>Контроль и управление системой учета ТМЦ</p>
                 </div>
                 
-                <div class="stats-grid">
-                    <!-- Статус системы -->
-                    <div class="stat-card" style="border-left: 4px solid #4CAF50;">
-                        <div class="stat-icon" style="background-color: #4CAF50;">✓</div>
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Состояние системы</h2>
+                        <button class="btn btn-primary btn-sm" onclick="refreshSystemStatus()">Обновить</button>
+                    </div>
+                    <div class="stats-grid">
+                    <div class="stat-card" style="border-left: 4px solid var(--success);">
+                        <div class="stat-icon" style="background: rgba(76,175,80,0.25);"></div>
                         <div class="stat-content">
                             <div class="stat-label">Статус системы</div>
                             <div class="stat-value" id="systemStatus" style="font-size: 18px; color: #4CAF50;">Работает</div>
-                            <div style="font-size: 12px; color: #999; margin-top: 5px;">Uptime: <span id="systemUptime">-</span></div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Uptime: <span id="systemUptime">-</span></div>
                         </div>
                     </div>
                     
-                    <!-- База данных -->
-                    <div class="stat-card" style="border-left: 4px solid #2196F3;">
-                        <div class="stat-icon" style="background-color: #2196F3;">🗄️</div>
+                    <div class="stat-card" style="border-left: 4px solid var(--primary);">
+                        <div class="stat-icon"></div>
                         <div class="stat-content">
                             <div class="stat-label">База данных</div>
-                            <div class="stat-value" id="dbStatus" style="font-size: 18px; color: #2196F3;">Подключено</div>
-                            <div style="font-size: 12px; color: #999; margin-top: 5px;">Записей: <span id="dbRecords">-</span></div>
+                            <div class="stat-value" id="dbStatus" style="font-size: 18px; color: var(--primary);">Подключено</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Записей: <span id="dbRecords">-</span></div>
                         </div>
                     </div>
                     
-                    <!-- Ошибки -->
-                    <div class="stat-card" style="border-left: 4px solid #FF9800;">
-                        <div class="stat-icon" style="background-color: #FF9800;">⚠️</div>
+                    <div class="stat-card" style="border-left: 4px solid var(--warning);">
+                        <div class="stat-icon" style="background: rgba(255,152,0,0.25);"></div>
                         <div class="stat-content">
                             <div class="stat-label">Ошибки (24ч)</div>
                             <div class="stat-value" id="errorCount">0</div>
-                            <div style="font-size: 12px; color: #999; margin-top: 5px;">Последняя: <span id="lastError">-</span></div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Последняя: <span id="lastError">-</span></div>
                         </div>
                     </div>
                     
-                    <!-- Нагрузка -->
-                    <div class="stat-card" style="border-left: 4px solid #9C27B0;">
-                        <div class="stat-icon" style="background-color: #9C27B0;">📊</div>
+                    <div class="stat-card" style="border-left: 4px solid var(--info);">
+                        <div class="stat-icon" style="background: rgba(0,188,212,0.25);"></div>
                         <div class="stat-content">
                             <div class="stat-label">Нагрузка системы</div>
                             <div class="stat-value" id="systemLoad">Низкая</div>
-                            <div style="font-size: 12px; color: #999; margin-top: 5px;">Запросов/мин: <span id="requestsPerMin">-</span></div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Запросов/мин: <span id="requestsPerMin">-</span></div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Статистика пользователей и данных -->
             <div class="content-section">
                 <div class="section-header">
-                    <h2>📊 Статистика системы</h2>
+                    <h2>Статистика системы</h2>
                 </div>
-                
                 <div class="stats-grid">
-                    <div class="stat-card" onclick="window.location.href='manager-users.html'" style="cursor: pointer;">
-                        <div class="stat-icon" style="background-color: #667eea;">👥</div>
+                    <div class="stat-card" onclick="window.location.href='manager-users.html'">
+                        <div class="stat-icon"></div>
                         <div class="stat-content">
                             <div class="stat-label">Пользователи</div>
                             <div class="stat-value" id="totalUsers">0</div>
-                            <div style="font-size: 12px; color: #999;">Активных: <span id="activeUsers">0</span></div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Активных: <span id="activeUsers">0</span></div>
                         </div>
                     </div>
                     
-                    <div class="stat-card" onclick="window.location.href='mol-catalog.html'" style="cursor: pointer;">
-                        <div class="stat-icon" style="background-color: #2196F3;">📦</div>
+                    <div class="stat-card" onclick="window.location.href='mol-catalog.html'">
+                        <div class="stat-icon"></div>
                         <div class="stat-content">
                             <div class="stat-label">Материалы</div>
                             <div class="stat-value" id="totalMaterials">0</div>
-                            <div style="font-size: 12px; color: #999;">Активных: <span id="activeMaterials">0</span></div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Активных: <span id="activeMaterials">0</span></div>
                         </div>
                     </div>
-                    
-                    <div class="stat-card" onclick="window.location.href='mol-requests.html'" style="cursor: pointer;">
-                        <div class="stat-icon" style="background-color: #4CAF50;">📝</div>
+                    <div class="stat-card" onclick="window.location.href='mol-requests.html'">
+                        <div class="stat-icon"></div>
                         <div class="stat-content">
                             <div class="stat-label">Заявки</div>
                             <div class="stat-value" id="totalRequests">0</div>
-                            <div style="font-size: 12px; color: #999;">В обработке: <span id="pendingRequests">0</span></div>
+                            <div style="font-size: 12px; color: var(--text-muted);">В обработке: <span id="pendingRequests">0</span></div>
                         </div>
                     </div>
-                    
-                    <div class="stat-card" onclick="window.location.href='admin-logs.html'" style="cursor: pointer;">
-                        <div class="stat-icon" style="background-color: #FF9800;">📋</div>
+                    <div class="stat-card" onclick="window.location.href='admin-logs.html'">
+                        <div class="stat-icon"></div>
                         <div class="stat-content">
                             <div class="stat-label">Записи в логах</div>
                             <div class="stat-value" id="totalLogs">0</div>
-                            <div style="font-size: 12px; color: #999;">За 24ч: <span id="logsToday">0</span></div>
+                            <div style="font-size: 12px; color: var(--text-muted);">За 24ч: <span id="logsToday">0</span></div>
                         </div>
                     </div>
-                    
                     <div class="stat-card">
-                        <div class="stat-icon" style="background-color: #f44336;">🏢</div>
+                        <div class="stat-icon"></div>
                         <div class="stat-content">
                             <div class="stat-label">Подразделения</div>
                             <div class="stat-value" id="totalDepartments">0</div>
                         </div>
                     </div>
-                    
                     <div class="stat-card">
-                        <div class="stat-icon" style="background-color: #00BCD4;">🏷️</div>
+                        <div class="stat-icon"></div>
                         <div class="stat-content">
                             <div class="stat-label">Категории</div>
                             <div class="stat-value" id="totalCategories">0</div>
@@ -194,44 +161,37 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Быстрый доступ к функциям -->
             <div class="content-section">
                 <div class="section-header">
-                    <h2>🚀 Быстрый доступ</h2>
+                    <h2>Быстрый доступ</h2>
                 </div>
-                
                 <div class="stats-grid">
-                    <div class="stat-card" onclick="window.location.href='manager-users.html'" style="cursor: pointer; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                        <div class="stat-icon" style="background-color: rgba(255,255,255,0.2); font-size: 36px;">👥</div>
+                    <div class="stat-card" onclick="window.location.href='manager-users.html'">
+                        <div class="stat-icon"></div>
                         <div class="stat-content">
-                            <div class="stat-label" style="color: white;">Управление пользователями</div>
-                            <div class="stat-value" style="font-size: 16px; color: white;">Добавление • Редактирование • Удаление</div>
+                            <div class="stat-label">Управление пользователями</div>
+                            <div class="stat-value" style="font-size: 16px;">Добавление • Редактирование • Удаление</div>
                         </div>
                     </div>
-                    
-                    <div class="stat-card" onclick="window.location.href='admin-database.html'" style="cursor: pointer; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                        <div class="stat-icon" style="background-color: rgba(255,255,255,0.2); font-size: 36px;">🗄️</div>
+                    <div class="stat-card" onclick="window.location.href='admin-database.html'">
+                        <div class="stat-icon"></div>
                         <div class="stat-content">
-                            <div class="stat-label" style="color: white;">Управление базой данных</div>
-                            <div class="stat-value" style="font-size: 16px; color: white;">Полный доступ ко всем таблицам</div>
+                            <div class="stat-label">Управление базой данных</div>
+                            <div class="stat-value" style="font-size: 16px;">Полный доступ ко всем таблицам</div>
                         </div>
                     </div>
-                    
-                    <div class="stat-card" onclick="window.location.href='admin-logs.html'" style="cursor: pointer; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
-                        <div class="stat-icon" style="background-color: rgba(255,255,255,0.2); font-size: 36px;">📋</div>
+                    <div class="stat-card" onclick="window.location.href='admin-logs.html'">
+                        <div class="stat-icon"></div>
                         <div class="stat-content">
-                            <div class="stat-label" style="color: white;">Журнал аудита</div>
-                            <div class="stat-value" style="font-size: 16px; color: white;">Просмотр • Фильтры • Экспорт</div>
+                            <div class="stat-label">Журнал аудита</div>
+                            <div class="stat-value" style="font-size: 16px;">Просмотр • Фильтры • Экспорт</div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Последние действия в системе -->
             <div class="content-section">
                 <div class="section-header">
-                    <h2>🕐 Последние действия в системе</h2>
+                    <h2>Последние действия в системе</h2>
                     <a href="admin-logs.html" class="btn btn-primary btn-sm">Все логи</a>
                 </div>
                 <div class="table-container">
@@ -253,12 +213,17 @@
                     </table>
                 </div>
             </div>
-        </main>
+            </main>
+        </div>
     </div>
     
     <script src="js/common.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
+            var img = document.querySelector('.app-header .app-logo img');
+            var ph = document.querySelector('.app-header .app-logo-placeholder');
+            if (img && ph) { img.onerror = function() { img.style.display = 'none'; ph.style.display = 'block'; }; if (!img.complete || !img.naturalWidth) ph.style.display = 'block'; }
+            var u = getCurrentUser(); if (u && document.getElementById('headerUserName')) document.getElementById('headerUserName').textContent = u.fullName || u.username || 'Администратор';
             await loadDashboardData();
             startAutoRefresh();
         });

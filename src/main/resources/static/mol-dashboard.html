@@ -6,134 +6,104 @@
     <base href="/api/">
     <title>Главный экран МОЛ - Система учета ТМЦ</title>
     <link rel="stylesheet" href="css/style.css">
-    <style>
-        .function-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-        
-        .function-card {
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .function-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .function-icon {
-            font-size: 60px;
-            margin-bottom: 15px;
-        }
-        
-        .function-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
-        }
-        
-        .function-description {
-            font-size: 14px;
-            color: #666;
-        }
-    </style>
 </head>
 <body>
+    <header class="app-header">
+        <a href="mol-dashboard.html" class="app-logo">
+            <img src="images/logo.png" alt="ТМЦ" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="app-logo-placeholder" style="display: none;">ТМЦ</span>
+        </a>
+        <nav class="header-nav">
+            <a href="mol-dashboard.html" class="active">На главную</a>
+            <a href="mol-catalog.html">Каталог</a>
+            <a href="mol-requests.html">Заявки</a>
+            <a href="mol-history.html">История</a>
+        </nav>
+        <div class="header-user">
+            <div class="header-user-icon">М</div>
+            <span id="headerUserName">МОЛ</span>
+        </div>
+    </header>
+    
     <div class="app-container">
-        <!-- Боковое меню -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>Система ТМЦ</h2>
-            </div>
+        <div class="app-body">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2>МОЛ</h2>
+                </div>
+                <nav class="sidebar-nav">
+                    <a href="mol-dashboard.html" class="nav-item active"><span>Главная</span></a>
+                    <a href="mol-catalog.html" class="nav-item"><span>Каталог ТМЦ</span></a>
+                    <a href="mol-requests.html" class="nav-item"><span>Заявки на ТМЦ</span></a>
+                    <a href="mol-history.html" class="nav-item"><span>История заявок</span></a>
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="user-info" id="userInfo">
+                        <div class="user-avatar">М</div>
+                        <div class="user-details">
+                            <div class="user-name"></div>
+                            <div class="user-role"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
+                </div>
+            </aside>
             
-            <nav class="sidebar-nav">
-                <a href="mol-dashboard.html" class="nav-item active">
-                    <span class="nav-icon">🏠</span>
-                    <span>Главная</span>
-                </a>
-            </nav>
-            
-            <div class="sidebar-footer">
-                <div class="user-info" id="userInfo">
-                    <div class="user-avatar">👤</div>
-                    <div class="user-details">
-                        <div class="user-name"></div>
-                        <div class="user-role"></div>
+            <main class="main-content">
+                <div class="page-header">
+                    <h1>Главный экран МОЛ</h1>
+                    <p>Выберите необходимую функцию</p>
+                </div>
+                
+                <div class="function-grid">
+                    <div class="function-card" onclick="window.location.href='mol-catalog.html'">
+                        <div class="function-icon"></div>
+                        <div class="function-title">Каталог ТМЦ</div>
+                        <div class="function-description">Просмотр и редактирование материалов на всех складах</div>
+                    </div>
+                    <div class="function-card" onclick="window.location.href='mol-requests.html'">
+                        <div class="function-icon"></div>
+                        <div class="function-title">Заявки на ТМЦ</div>
+                        <div class="function-description">Просмотр и обработка заявок от специалистов</div>
+                    </div>
+                    <div class="function-card" onclick="window.location.href='mol-writeoff.html'">
+                        <div class="function-icon"></div>
+                        <div class="function-title">Списание ТМЦ</div>
+                        <div class="function-description">Списание материалов со склада</div>
+                    </div>
+                    <div class="function-card" onclick="window.location.href='mol-order.html'">
+                        <div class="function-icon"></div>
+                        <div class="function-title">Заказ ТМЦ</div>
+                        <div class="function-description">Оформление заказа материалов</div>
+                    </div>
+                    <div class="function-card" onclick="window.location.href='mol-history.html'">
+                        <div class="function-icon"></div>
+                        <div class="function-title">История заявок</div>
+                        <div class="function-description">Полная история всех заявок</div>
+                    </div>
+                    <div class="function-card" onclick="window.location.href='mol-reports.html'">
+                        <div class="function-icon"></div>
+                        <div class="function-title">Отчеты</div>
+                        <div class="function-description">Формирование аналитических отчетов</div>
+                    </div>
+                    <div class="function-card" onclick="window.location.href='mol-erp.html'">
+                        <div class="function-icon"></div>
+                        <div class="function-title">Экспорт в ERP</div>
+                        <div class="function-description">Интеграция с ERP системой</div>
                     </div>
                 </div>
-                <button class="btn btn-secondary btn-sm" onclick="logout()">Выход</button>
-            </div>
-        </aside>
-        
-        <!-- Основной контент -->
-        <main class="main-content">
-            <header class="page-header">
-                <h1>Главный экран МОЛ</h1>
-                <p>Выберите необходимую функцию</p>
-            </header>
-            
-            <div class="function-grid">
-                <!-- Каталог ТМЦ -->
-                <div class="function-card" onclick="window.location.href='mol-catalog.html'">
-                    <div class="function-icon">📦</div>
-                    <div class="function-title">Каталог ТМЦ</div>
-                    <div class="function-description">Просмотр и редактирование материалов на всех складах</div>
-                </div>
-                
-                <!-- Заявки на ТМЦ -->
-                <div class="function-card" onclick="window.location.href='mol-requests.html'">
-                    <div class="function-icon">📝</div>
-                    <div class="function-title">Заявки на ТМЦ</div>
-                    <div class="function-description">Просмотр и обработка заявок от специалистов</div>
-                </div>
-                
-                <!-- Списание ТМЦ -->
-                <div class="function-card" onclick="window.location.href='mol-writeoff.html'">
-                    <div class="function-icon">🗑️</div>
-                    <div class="function-title">Списание ТМЦ</div>
-                    <div class="function-description">Списание материалов со склада</div>
-                </div>
-                
-                <!-- Заказ ТМЦ -->
-                <div class="function-card" onclick="window.location.href='mol-order.html'">
-                    <div class="function-icon">🛒</div>
-                    <div class="function-title">Заказ ТМЦ</div>
-                    <div class="function-description">Оформление заказа материалов</div>
-                </div>
-                
-                <!-- История заявок -->
-                <div class="function-card" onclick="window.location.href='mol-history.html'">
-                    <div class="function-icon">📜</div>
-                    <div class="function-title">История заявок</div>
-                    <div class="function-description">Полная история всех заявок</div>
-                </div>
-                
-                <!-- Отчеты -->
-                <div class="function-card" onclick="window.location.href='mol-reports.html'">
-                    <div class="function-icon">📊</div>
-                    <div class="function-title">Отчеты</div>
-                    <div class="function-description">Формирование аналитических отчетов</div>
-                </div>
-                
-                <!-- Экспорт в ERP -->
-                <div class="function-card" onclick="window.location.href='mol-erp.html'">
-                    <div class="function-icon">🔄</div>
-                    <div class="function-title">Экспорт в ERP</div>
-                    <div class="function-description">Интеграция с ERP системой</div>
-                </div>
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
     
     <script src="js/common.js"></script>
+    <script>
+        (function() {
+            var img = document.querySelector('.app-header .app-logo img');
+            var ph = document.querySelector('.app-header .app-logo-placeholder');
+            if (img && ph) { img.onerror = function() { img.style.display = 'none'; ph.style.display = 'block'; }; if (!img.complete || !img.naturalWidth) ph.style.display = 'block'; }
+            var u = getCurrentUser(); if (u && document.getElementById('headerUserName')) document.getElementById('headerUserName').textContent = u.fullName || u.username || 'МОЛ';
+        })();
+    </script>
 </body>
 </html>

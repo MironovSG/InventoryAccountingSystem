@@ -8,43 +8,36 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <header class="app-header">
+        <a href="dashboard.html" class="app-logo">
+            <img src="images/logo.png" alt="ТМЦ" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="app-logo-placeholder" style="display: none;">ТМЦ</span>
+        </a>
+        <nav class="header-nav">
+            <a href="dashboard.html">На главную</a>
+            <a href="materials.html" class="active">Материалы</a>
+            <a href="requests.html">Заявки</a>
+        </nav>
+        <div class="header-user">
+            <div class="header-user-icon">П</div>
+            <span id="headerUserName">Пользователь</span>
+        </div>
+    </header>
     <div class="app-container">
-        <!-- Боковое меню -->
+        <div class="app-body">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>Система ТМЦ</h2>
-            </div>
-            
+            <div class="sidebar-header"><h2>Меню</h2></div>
             <nav class="sidebar-nav">
-                <a href="dashboard.html" class="nav-item">
-                    <span class="nav-icon">📊</span>
-                    <span>Панель управления</span>
-                </a>
-                <a href="materials.html" class="nav-item active">
-                    <span class="nav-icon">📦</span>
-                    <span>Материалы</span>
-                </a>
-                <a href="requests.html" class="nav-item">
-                    <span class="nav-icon">📝</span>
-                    <span>Заявки</span>
-                </a>
-                <a href="movements.html" class="nav-item" id="movementsLink">
-                    <span class="nav-icon">🔄</span>
-                    <span>Движения</span>
-                </a>
-                <a href="users.html" class="nav-item" id="usersLink">
-                    <span class="nav-icon">👥</span>
-                    <span>Пользователи</span>
-                </a>
-                <a href="reports.html" class="nav-item" id="reportsLink">
-                    <span class="nav-icon">📈</span>
-                    <span>Отчеты</span>
-                </a>
+                <a href="dashboard.html" class="nav-item"><span>Панель управления</span></a>
+                <a href="materials.html" class="nav-item active"><span>Материалы</span></a>
+                <a href="requests.html" class="nav-item"><span>Заявки</span></a>
+                <a href="movements.html" class="nav-item" id="movementsLink"><span>Движения</span></a>
+                <a href="users.html" class="nav-item" id="usersLink"><span>Пользователи</span></a>
+                <a href="reports.html" class="nav-item" id="reportsLink"><span>Отчеты</span></a>
             </nav>
-            
             <div class="sidebar-footer">
                 <div class="user-info" id="userInfo">
-                    <div class="user-avatar">👤</div>
+                    <div class="user-avatar">П</div>
                     <div class="user-details">
                         <div class="user-name"></div>
                         <div class="user-role"></div>
@@ -103,8 +96,8 @@
                 </div>
             </div>
         </main>
+        </div>
     </div>
-    
     <!-- Модальное окно добавления материала -->
     <div id="addMaterialModal" class="modal">
         <div class="modal-content">

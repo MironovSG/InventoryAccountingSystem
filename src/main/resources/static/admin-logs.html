@@ -8,51 +8,40 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <header class="app-header">
+        <a href="admin-dashboard.html" class="app-logo">
+            <img src="images/logo.png" alt="ТМЦ" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="app-logo-placeholder" style="display: none;">ТМЦ</span>
+        </a>
+        <nav class="header-nav">
+            <a href="admin-dashboard.html">На главную</a>
+            <a href="manager-users.html">Пользователи</a>
+            <a href="admin-database.html">БД</a>
+            <a href="admin-logs.html" class="active">Логи</a>
+            <a href="mol-requests.html">Заявки</a>
+            <a href="mol-catalog.html">Каталог</a>
+        </nav>
+        <div class="header-user">
+            <div class="header-user-icon">А</div>
+            <span id="headerUserName">Администратор</span>
+        </div>
+    </header>
     <div class="app-container">
-        <!-- Боковое меню -->
+        <div class="app-body">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>🔧 Администратор</h2>
-                <p style="font-size: 12px; color: #999;">Полный доступ</p>
-            </div>
-            
+            <div class="sidebar-header"><h2>Администратор</h2></div>
             <nav class="sidebar-nav">
-                <a href="admin-dashboard.html" class="nav-item">
-                    <span class="nav-icon">🏠</span>
-                    <span>Панель мониторинга</span>
-                </a>
-                
-                <a href="manager-users.html" class="nav-item">
-                    <span class="nav-icon">👥</span>
-                    <span>Управление пользователями</span>
-                </a>
-                
-                <a href="admin-database.html" class="nav-item">
-                    <span class="nav-icon">🗄️</span>
-                    <span>Управление БД</span>
-                </a>
-                
-                <a href="admin-logs.html" class="nav-item active">
-                    <span class="nav-icon">📋</span>
-                    <span>Журнал логов</span>
-                </a>
-                
-                <div class="nav-divider">Управление системой</div>
-                
-                <a href="mol-catalog.html" class="nav-item">
-                    <span class="nav-icon">📦</span>
-                    <span>Каталог ТМЦ</span>
-                </a>
-                
-                <a href="mol-requests.html" class="nav-item">
-                    <span class="nav-icon">📝</span>
-                    <span>Заявки на ТМЦ</span>
-                </a>
+                <a href="admin-dashboard.html" class="nav-item"><span>Панель мониторинга</span></a>
+                <a href="manager-users.html" class="nav-item"><span>Управление пользователями</span></a>
+                <a href="admin-database.html" class="nav-item"><span>Управление БД</span></a>
+                <a href="admin-logs.html" class="nav-item active"><span>Журнал логов</span></a>
+                <div class="nav-divider">Система</div>
+                <a href="mol-catalog.html" class="nav-item"><span>Каталог ТМЦ</span></a>
+                <a href="mol-requests.html" class="nav-item"><span>Заявки на ТМЦ</span></a>
             </nav>
-            
             <div class="sidebar-footer">
                 <div class="user-info" id="userInfo">
-                    <div class="user-avatar">👤</div>
+                    <div class="user-avatar">А</div>
                     <div class="user-details">
                         <div class="user-name"></div>
                         <div class="user-role"></div>
@@ -164,8 +153,8 @@
                 </div>
             </div>
         </main>
+        </div>
     </div>
-    
     <script src="js/common.js"></script>
     <script>
         let allLogs = [];

@@ -147,8 +147,22 @@ function getStockLevelIndicator(stockLevel) {
     return `<span class="stock-level ${color}"></span>`;
 }
 
+// Инициализация шапки: логотип и имя пользователя
+function initHeader() {
+    var logoImg = document.querySelector('.app-header .app-logo img');
+    var logoPh = document.querySelector('.app-header .app-logo-placeholder');
+    if (logoImg && logoPh) {
+        logoImg.onerror = function() { logoImg.style.display = 'none'; logoPh.style.display = 'block'; };
+        if (!logoImg.complete || !logoImg.naturalWidth) logoPh.style.display = 'block';
+    }
+    var u = getCurrentUser();
+    var headerName = document.getElementById('headerUserName');
+    if (headerName && u) headerName.textContent = u.fullName || u.username || 'Пользователь';
+}
+
 // Инициализация информации о пользователе
 function initUserInfo() {
+    initHeader();
     const user = getCurrentUser();
     if (user) {
         const userInfo = document.getElementById('userInfo');

@@ -8,35 +8,35 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <header class="app-header">
+        <a href="mol-dashboard.html" class="app-logo">
+            <img src="images/logo.png" alt="ТМЦ" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="app-logo-placeholder" style="display: none;">ТМЦ</span>
+        </a>
+        <nav class="header-nav">
+            <a href="mol-dashboard.html">На главную</a>
+            <a href="mol-catalog.html">Каталог</a>
+            <a href="mol-requests.html">Заявки</a>
+            <a href="mol-history.html" class="active">История</a>
+        </nav>
+        <div class="header-user">
+            <div class="header-user-icon">М</div>
+            <span id="headerUserName">МОЛ</span>
+        </div>
+    </header>
     <div class="app-container">
-        <!-- Боковое меню -->
+        <div class="app-body">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>Система ТМЦ</h2>
-            </div>
-            
+            <div class="sidebar-header"><h2>МОЛ</h2></div>
             <nav class="sidebar-nav">
-                <a href="mol-dashboard.html" class="nav-item">
-                    <span class="nav-icon">🏠</span>
-                    <span>Главная</span>
-                </a>
-                <a href="mol-catalog.html" class="nav-item">
-                    <span class="nav-icon">📦</span>
-                    <span>Каталог ТМЦ</span>
-                </a>
-                <a href="mol-requests.html" class="nav-item">
-                    <span class="nav-icon">📝</span>
-                    <span>Заявки</span>
-                </a>
-                <a href="mol-history.html" class="nav-item active">
-                    <span class="nav-icon">📜</span>
-                    <span>История</span>
-                </a>
+                <a href="mol-dashboard.html" class="nav-item"><span>Главная</span></a>
+                <a href="mol-catalog.html" class="nav-item"><span>Каталог ТМЦ</span></a>
+                <a href="mol-requests.html" class="nav-item"><span>Заявки</span></a>
+                <a href="mol-history.html" class="nav-item active"><span>История</span></a>
             </nav>
-            
             <div class="sidebar-footer">
                 <div class="user-info" id="userInfo">
-                    <div class="user-avatar">👤</div>
+                    <div class="user-avatar">М</div>
                     <div class="user-details">
                         <div class="user-name"></div>
                         <div class="user-role"></div>
@@ -106,8 +106,8 @@
                 </div>
             </div>
         </main>
+        </div>
     </div>
-    
     <script src="js/common.js"></script>
     <script>
         let allHistory = [];

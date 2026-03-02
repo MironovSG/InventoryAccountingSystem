@@ -8,7 +8,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     const errorDiv = document.getElementById('errorMessage');
     
     try {
-        const response = await fetch('/api/auth/login', {
+        const response = await fetch('auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -43,7 +43,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         } else if (data.role === 'MOL') {
             window.location.href = 'mol-dashboard.html';
         } else if (data.role === 'MANAGER') {
-            window.location.href = 'manager-dashboard.html';
+            window.location.href = 'manager-users.html';
         } else {
             // Для всех остальных ролей (ENGINEER, SPECIALIST_*)
             window.location.href = 'user-dashboard.html';

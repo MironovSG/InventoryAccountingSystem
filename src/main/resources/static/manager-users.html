@@ -8,44 +8,39 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <header class="app-header">
+        <a href="manager-users.html" class="app-logo">
+            <img src="images/logo.png" alt="ТМЦ" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <span class="app-logo-placeholder" style="display: none;">ТМЦ</span>
+        </a>
+        <nav class="header-nav">
+            <a href="manager-users.html" class="active">На главную</a>
+            <a href="mol-requests.html">Заявки</a>
+            <a href="mol-catalog.html">Каталог</a>
+            <a href="mol-history.html">История</a>
+        </nav>
+        <div class="header-user">
+            <div class="header-user-icon">Р</div>
+            <span id="headerUserName">Руководитель</span>
+        </div>
+    </header>
     <div class="app-container">
-        <!-- Боковое меню -->
+        <div class="app-body">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>Система ТМЦ</h2>
-                <p style="font-size: 12px; color: #999;">Руководитель</p>
+                <h2>Руководитель</h2>
             </div>
-            
             <nav class="sidebar-nav">
-                <a href="manager-dashboard.html" class="nav-item">
-                    <span class="nav-icon">🏠</span>
-                    <span>Главная</span>
-                </a>
-                
-                <a href="manager-users.html" class="nav-item active" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 10px;">
-                    <span class="nav-icon">👥</span>
-                    <span>Управление пользователями</span>
-                </a>
-                
+                <a href="manager-dashboard.html" class="nav-item"><span>Главная</span></a>
+                <a href="manager-users.html" class="nav-item active"><span>Управление пользователями</span></a>
                 <div class="nav-divider">Функции МОЛ</div>
-                
-                <a href="mol-catalog.html" class="nav-item">
-                    <span class="nav-icon">📦</span>
-                    <span>Каталог ТМЦ</span>
-                </a>
-                <a href="mol-requests.html" class="nav-item">
-                    <span class="nav-icon">📝</span>
-                    <span>Заявки на ТМЦ</span>
-                </a>
-                <a href="mol-history.html" class="nav-item">
-                    <span class="nav-icon">📜</span>
-                    <span>История заявок</span>
-                </a>
+                <a href="mol-catalog.html" class="nav-item"><span>Каталог ТМЦ</span></a>
+                <a href="mol-requests.html" class="nav-item"><span>Заявки на ТМЦ</span></a>
+                <a href="mol-history.html" class="nav-item"><span>История заявок</span></a>
             </nav>
-            
             <div class="sidebar-footer">
                 <div class="user-info" id="userInfo">
-                    <div class="user-avatar">👤</div>
+                    <div class="user-avatar">Р</div>
                     <div class="user-details">
                         <div class="user-name"></div>
                         <div class="user-role"></div>
@@ -109,8 +104,8 @@
                 </div>
             </div>
         </main>
+        </div>
     </div>
-    
     <!-- Модальное окно добавления пользователя -->
     <div id="addUserModal" class="modal">
         <div class="modal-content" style="max-width: 600px;">
