@@ -25,23 +25,33 @@ public class TestDataConfig {
         this.passwordEncoder = passwordEncoder;
     }
 
+    private static final String TEST_PASSWORD = "test123";
+
     @Transactional
     @jakarta.annotation.PostConstruct
     public void init() {
-        if (userRepository.findByUsername("admin").isEmpty()) {
-            User admin = User.builder()
-                    .username("admin")
-                    .password(passwordEncoder.encode("admin123"))
-                    .email("admin@test.local")
-                    .lastName("Admin")
-                    .firstName("Admin")
-                    .role(UserRole.ADMIN)
+        saveUserIfAbsent("admin", "admin123", "admin@test.local", "Admin", "Admin", UserRole.ADMIN);
+        saveUserIfAbsent("manager", TEST_PASSWORD, "manager@test.local", "Manager", "Test", UserRole.MANAGER);
+        saveUserIfAbsent("mol_user", TEST_PASSWORD, "mol@test.local", "Mol", "Test", UserRole.MOL);
+        saveUserIfAbsent("engineer", TEST_PASSWORD, "engineer@test.local", "Engineer", "Test", UserRole.ENGINEER);
+        saveUserIfAbsent("specialist_arm", TEST_PASSWORD, "arm@test.local", "Specialist", "ARM", UserRole.SPECIALIST_ARM);
+    }
+
+    private void saveUserIfAbsent(String username, String password, String email, String lastName, String firstName, UserRole role) {
+        if (userRepository.findByUsername(username).isEmpty()) {
+            User user = User.builder()
+                    .username(username)
+                    .password(passwordEncoder.encode(password))
+                    .email(email)
+                    .lastName(lastName)
+                    .firstName(firstName)
+                    .role(role)
                     .active(true)
                     .build();
-            admin.setCreatedAt(LocalDateTime.now());
-            admin.setUpdatedAt(LocalDateTime.now());
-            admin.setDeleted(false);
-            userRepository.save(admin);
+            user.setCreatedAt(LocalDateTime.now());
+            user.setUpdatedAt(LocalDateTime.now());
+            user.setDeleted(false);
+            userRepository.save(user);
         }
     }
 }
