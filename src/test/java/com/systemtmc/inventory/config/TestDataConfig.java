@@ -39,15 +39,14 @@ public class TestDataConfig {
 
     private void saveUserIfAbsent(String username, String password, String email, String lastName, String firstName, UserRole role) {
         if (userRepository.findByUsername(username).isEmpty()) {
-            User user = User.builder()
-                    .username(username)
-                    .password(passwordEncoder.encode(password))
-                    .email(email)
-                    .lastName(lastName)
-                    .firstName(firstName)
-                    .role(role)
-                    .active(true)
-                    .build();
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(passwordEncoder.encode(password));
+            user.setEmail(email);
+            user.setLastName(lastName);
+            user.setFirstName(firstName);
+            user.setRole(role);
+            user.setActive(true);
             user.setCreatedAt(LocalDateTime.now());
             user.setUpdatedAt(LocalDateTime.now());
             user.setDeleted(false);

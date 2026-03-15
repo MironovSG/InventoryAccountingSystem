@@ -140,19 +140,10 @@ public class ConcurrentLoadTest extends BaseWebTest {
 
         long successCount = results.stream().filter(r -> r.success).count();
         long failedCount = results.stream().filter(r -> !r.success).count();
-        OptionalLong maxResponseTime = results.stream().mapToLong(r -> r.responseTimeMs).max();
-
-        assertThat(successCount)
-                .as("Все 50 попыток авторизации должны завершиться успешно без конфликтов")
-                .isEqualTo(CONCURRENT_USERS);
-        assertThat(failedCount).isZero();
-        assertThat(maxResponseTime.orElse(0))
-                .as("Время отклика авторизации не должно превышать %d мс", MAX_RESPONSE_TIME_MS)
-                .isLessThanOrEqualTo(MAX_RESPONSE_TIME_MS);
-
+        long maxResp = results.stream().mapToLong(r -> r.responseTimeMs).max().orElse(0);
         long minTime = results.stream().mapToLong(r -> r.responseTimeMs).min().orElse(0);
         double avgTime = results.stream().mapToLong(r -> r.responseTimeMs).average().orElse(0);
-        String verdict = failedCount == 0 && maxResponseTime.orElse(0) <= MAX_RESPONSE_TIME_MS
+        String verdict = failedCount == 0 && maxResp <= MAX_RESPONSE_TIME_MS
                 ? "ПРОЙДЕН — все 50 авторизаций успешны, производительность в норме."
                 : "ПРОВАЛЕН — есть ошибки или превышено время отклика.";
         printReport(
@@ -163,11 +154,19 @@ public class ConcurrentLoadTest extends BaseWebTest {
                         "Успешных авторизаций                  : " + successCount,
                         "Неуспешных (ошибки/конфликты)          : " + failedCount,
                         "Общее время теста                      : " + totalTime + " мс",
-                        "Время отклика — мин / среднее / макс   : " + minTime + " / " + (long) avgTime + " / " + maxResponseTime.orElse(0) + " мс",
+                        "Время отклика — мин / среднее / макс   : " + minTime + " / " + (long) avgTime + " / " + maxResp + " мс",
                         "Допустимый максимум времени отклика    : " + MAX_RESPONSE_TIME_MS + " мс"
                 },
                 verdict
         );
+
+        assertThat(successCount)
+                .as("Успешных авторизаций должно быть %d; фактически %d. Проверьте: 1) приложение на порту %d с context-path /api 2) тестовые пользователи в TestDataConfig", CONCURRENT_USERS, successCount, port)
+                .isEqualTo(CONCURRENT_USERS);
+        assertThat(failedCount).as("Неуспешных авторизаций: %d", failedCount).isZero();
+        assertThat(maxResp)
+                .as("Максимальное время отклика %d мс превышает допустимые %d мс", maxResp, MAX_RESPONSE_TIME_MS)
+                .isLessThanOrEqualTo(MAX_RESPONSE_TIME_MS);
     }
 
     @Test
@@ -212,12 +211,9 @@ public class ConcurrentLoadTest extends BaseWebTest {
         executor.shutdown();
         executor.awaitTermination(10, TimeUnit.SECONDS);
 
-        assertThat(successCount.get())
-                .as("Все 50 пользователей с разными правами должны получить доступ к своим функциям без конфликтов")
-                .isEqualTo(CONCURRENT_USERS);
-        assertThat(conflictOrErrorCount.get()).isZero();
-
-        String verdict = conflictOrErrorCount.get() == 0
+        int ok = successCount.get();
+        int err = conflictOrErrorCount.get();
+        String verdict = err == 0
                 ? "ПРОЙДЕН — все 50 пользователей (5 ролей) работают без конфликтов."
                 : "ПРОВАЛЕН — зафиксированы конфликты или ошибки доступа.";
         printReport(
@@ -226,12 +222,17 @@ public class ConcurrentLoadTest extends BaseWebTest {
                 new String[]{
                         "Одновременных пользователей (потоков) : " + CONCURRENT_USERS,
                         "Роли в тесте                         : ADMIN, MANAGER, MOL, ENGINEER, SPECIALIST_ARM",
-                        "Пользователей с успешным доступом    : " + successCount.get() + " / " + CONCURRENT_USERS,
-                        "Конфликтов / ошибок доступа          : " + conflictOrErrorCount.get(),
+                        "Пользователей с успешным доступом    : " + ok + " / " + CONCURRENT_USERS,
+                        "Конфликтов / ошибок доступа          : " + err,
                         "Проверяемые эндпоинты                : /auth/me, /materials, /requests, /departments"
                 },
                 verdict
         );
+
+        assertThat(ok)
+                .as("Успешных пользователей должно быть %d; фактически %d. Ошибок доступа: %d", CONCURRENT_USERS, ok, err)
+                .isEqualTo(CONCURRENT_USERS);
+        assertThat(err).as("Конфликтов/ошибок доступа: %d", err).isZero();
     }
 
     @Test
@@ -262,20 +263,14 @@ public class ConcurrentLoadTest extends BaseWebTest {
         }
 
         executor.shutdown();
-        assertThat(executor.awaitTermination(60, TimeUnit.SECONDS)).isTrue();
+        assertThat(executor.awaitTermination(60, TimeUnit.SECONDS))
+                .as("Потоки не завершились за 60 с")
+                .isTrue();
 
         int total = totalCalls.get();
         int success = successCalls.get();
         long maxTime = responseTimes.stream().mapToLong(Long::longValue).max().orElse(0);
         double avgTime = responseTimes.stream().mapToLong(Long::longValue).average().orElse(0);
-
-        assertThat(success)
-                .as("Ключевые функции должны быть доступны и стабильны: успешных вызовов должно быть не меньше 95%%")
-                .isGreaterThanOrEqualTo((int) (total * 0.95));
-        assertThat(maxTime)
-                .as("Максимальное время отклика ключевой функции не должно превышать %d мс", MAX_RESPONSE_TIME_MS)
-                .isLessThanOrEqualTo(MAX_RESPONSE_TIME_MS);
-
         int failCount = total - success;
         double successRate = total > 0 ? 100.0 * success / total : 0;
         long minTime = responseTimes.stream().mapToLong(Long::longValue).min().orElse(0);
@@ -296,6 +291,13 @@ public class ConcurrentLoadTest extends BaseWebTest {
                 },
                 verdict
         );
+
+        assertThat(success)
+                .as("Успешных вызовов должно быть >= 95%% от %d (т.е. >= %d); фактически %d (%.1f%%)", total, (int) (total * 0.95), success, successRate)
+                .isGreaterThanOrEqualTo((int) (total * 0.95));
+        assertThat(maxTime)
+                .as("Максимальное время отклика %d мс превышает допустимые %d мс", maxTime, MAX_RESPONSE_TIME_MS)
+                .isLessThanOrEqualTo(MAX_RESPONSE_TIME_MS);
     }
 
     private static class LoginResult {
