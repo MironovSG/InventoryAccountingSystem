@@ -32,4 +32,9 @@ public abstract class BaseEntity {
     
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
+
+    /** Явные сеттеры для аудита (совместимость с тестами при отключённом Lombok в IDE). */
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public void setDeleted(Boolean deleted) { this.deleted = deleted; }
 }

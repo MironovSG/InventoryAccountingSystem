@@ -192,12 +192,16 @@ public class ConcurrentLoadTest extends BaseWebTest {
                     conflictOrErrorCount.incrementAndGet();
                     return;
                 }
-                // Каждый пользователь вызывает ключевые функции, доступные по роли
+                // Каждый пользователь вызывает ключевые функции; 403 = нет прав по роли (нормально)
                 int me = getWithToken("/auth/me", token);
                 int materials = getWithToken("/materials", token);
                 int requests = getWithToken("/requests", token);
                 int departments = getWithToken("/departments", token);
-                if (me == 200 && (materials == 200 || materials == 403) && (requests == 200 || requests == 403) && departments == 200) {
+                boolean okMe = me == 200;
+                boolean okMaterials = materials == 200 || materials == 403;
+                boolean okRequests = requests == 200 || requests == 403;
+                boolean okDepartments = departments == 200 || departments == 403;
+                if (okMe && okMaterials && okRequests && okDepartments) {
                     successCount.incrementAndGet();
                 } else {
                     conflictOrErrorCount.incrementAndGet();

@@ -80,7 +80,15 @@ public class User extends BaseEntity {
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
+    /** Явные сеттеры для полей, используемых в тестах (совместимость при отключённом Lombok в IDE). */
+    public void setUsername(String username) { this.username = username; }
+    public void setEmail(String email) { this.email = email; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public void setRole(UserRole role) { this.role = role; }
+    public void setActive(Boolean active) { this.active = active; }
+
     /**
      * Получить полное имя пользователя
      */
